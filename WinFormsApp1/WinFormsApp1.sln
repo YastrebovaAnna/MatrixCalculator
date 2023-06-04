@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalcMatrix", "WinFormsApp1\CalcMatrix.csproj", "{2E571EEC-4FEC-4AFC-840E-830BE57378A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryMatrix", "LibraryMatrix\LibraryMatrix.csproj", "{093AFC47-97D3-4CA5-9A74-907D7C14D2D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E571EEC-4FEC-4AFC-840E-830BE57378A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E571EEC-4FEC-4AFC-840E-830BE57378A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E571EEC-4FEC-4AFC-840E-830BE57378A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E571EEC-4FEC-4AFC-840E-830BE57378A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{093AFC47-97D3-4CA5-9A74-907D7C14D2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{093AFC47-97D3-4CA5-9A74-907D7C14D2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{093AFC47-97D3-4CA5-9A74-907D7C14D2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{093AFC47-97D3-4CA5-9A74-907D7C14D2D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B26DB0A2-0238-4D75-92CB-B2F72A975F09}
+	EndGlobalSection
+EndGlobal

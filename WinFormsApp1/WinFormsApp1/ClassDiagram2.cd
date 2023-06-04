@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WinFormsApp1.Form1">
+    <Position X="1.25" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>kKANAYgogChUIIGBAACoUJGSgoQAEICAyAAQQQBIAQQ=</HashCode>
+      <FileName>Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CalcMatrix.FormDetermCharactNumb">
+    <Position X="3.25" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAEQAQACgKAVABFAAAGEGCACkAwAADAAAQAAYABECIA=</HashCode>
+      <FileName>FormDetermCharactNumb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WinFormsApp1.FormForArithmetic">
+    <Position X="7.5" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>MAGJAwBSCGEYgDBQAFiOAQICQoRAARIECREAQCFGCJA=</HashCode>
+      <FileName>FormForArithmetic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CalcMatrix.FormForTransposing">
+    <Position X="5.5" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>ECAgAQAAAKEAgRFAgASGCCAqGQABAkECCRAAYBFECgA=</HashCode>
+      <FileName>FormForTransposing.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
