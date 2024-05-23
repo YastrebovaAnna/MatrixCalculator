@@ -27,25 +27,25 @@ namespace WinFormsApp1
         }
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
-            numbers1 = CreateAndDisplayMatrix((int)numericUpDownRowsFirstMatrix.Value, (int)numericUpDownColFirstMatrix.Value, 80, 240);
+            numbers1 = CreateAndDisplayMatrix((int)numericUpDownRowsFirstMatrix.Value, (int)numericUpDownColFirstMatrix.Value, 80, 240, true);
 
         }
 
         private void buttonDisplaySecondMatrix_Click(object sender, EventArgs e)
         {
-            numbers2 = CreateAndDisplayMatrix((int)numericUpDownRowsSecondMatrix.Value, (int)numericUpDownColSecondMatrix.Value, 840, 240);
+            numbers2 = CreateAndDisplayMatrix((int)numericUpDownRowsSecondMatrix.Value, (int)numericUpDownColSecondMatrix.Value, 840, 240, false);
 
         }
 
-        private TextBoxMatrix CreateAndDisplayMatrix(int rows, int cols, int startX, int startY)
+        private TextBoxMatrix CreateAndDisplayMatrix(int rows, int cols, int startX, int startY, bool isFirstMatrix)
         {
             IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
             TextBoxMatrix matrix = new TextBoxMatrix(rows, cols, startX, startY, dataInputFactory);
-            AddMatrixToForm(matrix);
+            AddMatrixToForm(matrix, isFirstMatrix);
             return matrix;
         }
 
-        private void AddMatrixToForm(TextBoxMatrix matrix)
+        private void AddMatrixToForm(TextBoxMatrix matrix, bool isFirstMatrix)
         {
             foreach (var dataInput in matrix.DataInputs)
             {
@@ -54,18 +54,27 @@ namespace WinFormsApp1
                 textBox.TextChanged += MatrixTextBox_TextChanged;
             }
 
-            AdjustButtons(matrix);
+            AdjustButtons(matrix, isFirstMatrix);
         }
-        private void AdjustButtons(TextBoxMatrix matrix)
+        private void AdjustButtons(TextBoxMatrix matrix, bool isFirstMatrix)
         {
             var lastTextBox = ((WinFormTextBox)matrix.GetLastDataInput()).GetTextBox();
             if (lastTextBox != null)
             {
                 int newY = lastTextBox.Location.Y + lastTextBox.Height + 10;
-                SetButtonPositions(newY);
+
+                if (isFirstMatrix)
+                {
+                    SetLeftButtonPositions(newY);
+                }
+                else
+                {
+                    SetRightButtonPositions(newY);
+                }
             }
         }
-        private void SetButtonPositions(int newY)
+
+        private void SetLeftButtonPositions(int newY)
         {
             buttonMatrixPow.Location = new Point(buttonMatrixPow.Location.X, newY);
             textBoxForExponent.Location = new Point(buttonMatrixPow.Location.X + buttonMatrixPow.Width + 0, newY);
@@ -80,10 +89,25 @@ namespace WinFormsApp1
             buttonTangMatrix.Location = new Point(buttonTangMatrix.Location.X, buttonCosMatrix.Location.Y + buttonCosMatrix.Height + 10);
         }
 
+        private void SetRightButtonPositions(int newY)
+        {
+            buttonSecondMatrixPow.Location = new Point(buttonSecondMatrixPow.Location.X, newY);
+            textBoxForSecondExponent.Location = new Point(buttonSecondMatrixPow.Location.X + buttonSecondMatrixPow.Width + 0, newY);
+
+            buttonSecondMultSklyar.Location = new Point(buttonSecondMultSklyar.Location.X, newY + buttonSecondMatrixPow.Height + 10);
+            textBoxForSecondSkalyar.Location = new Point(textBoxForSecondSkalyar.Location.X, newY + textBoxForSecondExponent.Height + 10);
+
+            buttonExpSecondMatrix.Location = new Point(buttonExpSecondMatrix.Location.X, newY + buttonSecondMatrixPow.Height + buttonSecondMultSklyar.Height + 20);
+            buttonLogSecondMatrix.Location = new Point(buttonLogSecondMatrix.Location.X, buttonExpSecondMatrix.Location.Y + buttonExpSecondMatrix.Height + 10);
+            buttonSinSecondMatrix.Location = new Point(buttonSinSecondMatrix.Location.X, buttonLogSecondMatrix.Location.Y + buttonLogSecondMatrix.Height + 10);
+            buttonCosSecondMatrix.Location = new Point(buttonCosSecondMatrix.Location.X, buttonSinSecondMatrix.Location.Y + buttonSinSecondMatrix.Height + 10);
+            buttonTangSecondMatrix.Location = new Point(buttonTangSecondMatrix.Location.X, buttonCosSecondMatrix.Location.Y + buttonCosSecondMatrix.Height + 10);
+        }
+
         private void buttonSol_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues1 != null && matrixValues2 != null)
             {
                 int rows1 = numbers1.Rows;
@@ -165,7 +189,8 @@ namespace WinFormsApp1
 
         private void DisplayResultMatrix()
         {
-            resultMatrixArray = resultMatrix.MatrixArray;
+            double[,] resultMatrixArray = resultMatrix.MatrixArray;
+
             if (resultTextBoxMatrix != null)
             {
                 foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
@@ -174,16 +199,23 @@ namespace WinFormsApp1
                 }
             }
 
-            resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70, new WinFormDataInputFactory());
-            AddMatrixToForm(resultTextBoxMatrix);
-            resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
+            resultTextBoxMatrix = new TextBoxMatrix(
+                resultMatrix.Rows,
+                resultMatrix.Columns,
+                buttonTangMatrix.Location.X,
+                buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70,
+                new WinFormDataInputFactory()
+            );
+
+            AddMatrixToForm(resultTextBoxMatrix, false);
+
+            MatrixProcessor.SetMatrixValues(resultTextBoxMatrix, resultMatrixArray);
 
             foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
             {
                 textBox.ReadOnly = true;
             }
 
-            resultTextBoxMatrix.AutoSizeDataInputs();
             AdjustResultMatrixLayout();
         }
 
@@ -200,7 +232,7 @@ namespace WinFormsApp1
         }
         private void buttonMatrixPow_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             int exponent = GetExponentValue(textBoxForExponent);
             if (matrixValues1 != null && exponent >= 0)
             {
@@ -227,7 +259,7 @@ namespace WinFormsApp1
         }
         private void buttonMultSklyar_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             double scalar = GetScalarValue(textBoxForSkalyar);
             if (matrixValues1 != null && scalar != double.MinValue)
             {
@@ -255,7 +287,7 @@ namespace WinFormsApp1
         }
         private void buttonSecondMatrixPow_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             int exponent = GetExponentValue(textBoxForSecondExponent);
             if (matrixValues2 != null && exponent >= 0)
             {
@@ -269,7 +301,7 @@ namespace WinFormsApp1
 
         private void buttonSecondMultSklyar_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             double scalar = GetScalarValue(textBoxForSecondSkalyar);
             if (matrixValues2 != null && scalar != double.MinValue)
             {
@@ -282,7 +314,7 @@ namespace WinFormsApp1
         }
         private void buttonExpMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues1 != null)
             {
                 resultMatrix = PerformMatrixExponential(matrixValues1);
@@ -300,7 +332,7 @@ namespace WinFormsApp1
         private void buttonLogMatrix_Click(object sender, EventArgs e)
         {
 
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues1 != null)
             {
                 resultMatrix = PerformMatrixLogarithm(matrixValues1);
@@ -317,7 +349,7 @@ namespace WinFormsApp1
         }
         private void buttonSinMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues1 != null)
             {
                 resultMatrix = PerformMatrixSine(matrixValues1);
@@ -334,7 +366,7 @@ namespace WinFormsApp1
         }
         private void buttonCosMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues1 != null)
             {
                 resultMatrix = PerformMatrixCosine(matrixValues1);
@@ -351,7 +383,7 @@ namespace WinFormsApp1
         }
         private void buttonTangMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues1 != null)
             {
                 resultMatrix = PerformMatrixTangent(matrixValues1);
@@ -368,7 +400,7 @@ namespace WinFormsApp1
         }
         private void buttonExpSecondMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues2 != null)
             {
                 resultMatrix = PerformMatrixExponential(matrixValues2);
@@ -381,7 +413,7 @@ namespace WinFormsApp1
 
         private void buttonLogSecondMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues2 != null)
             {
                 resultMatrix = PerformMatrixLogarithm(matrixValues2);
@@ -394,7 +426,7 @@ namespace WinFormsApp1
 
         private void buttonSinSecondMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues2 != null)
             {
                 resultMatrix = PerformMatrixSine(matrixValues2);
@@ -407,7 +439,7 @@ namespace WinFormsApp1
 
         private void buttonCosSecondMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues2 != null)
             {
                 resultMatrix = PerformMatrixCosine(matrixValues2);
@@ -420,7 +452,7 @@ namespace WinFormsApp1
 
         private void buttonTangSecondMatrix_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
             if (matrixValues2 != null)
             {
                 resultMatrix = PerformMatrixTangent(matrixValues2);
@@ -436,7 +468,8 @@ namespace WinFormsApp1
             if (numbers1 != null)
             {
                 ClearMatrix(numbers1);
-                ResetButtonPositions();
+                numbers1 = null;
+                ResetButtonPositions(true);
             }
         }
 
@@ -445,7 +478,8 @@ namespace WinFormsApp1
             if (numbers2 != null)
             {
                 ClearMatrix(numbers2);
-                ResetButtonPositions();
+                numbers2 = null;
+                ResetButtonPositions(false);
             }
         }
         private void ClearMatrix(TextBoxMatrix matrix)
@@ -457,17 +491,34 @@ namespace WinFormsApp1
             }
         }
 
-        private void ResetButtonPositions()
+        private void ResetButtonPositions(bool isFirstMatrix)
         {
-            buttonMatrixPow.Location = new Point(74, 245);
-            textBoxForExponent.Location = new Point(265, 245);
-            buttonMultSklyar.Location = new Point(74, 280);
-            textBoxForSkalyar.Location = new Point(265, 280);
-            buttonExpMatrix.Location = new Point(73, 315);
-            buttonLogMatrix.Location = new Point(74, 350);
-            buttonSinMatrix.Location = new Point(74, 385);
-            buttonCosMatrix.Location = new Point(73, 420);
-            buttonTangMatrix.Location = new Point(74, 455);
+            if (isFirstMatrix)
+            {
+                buttonMatrixPow.Location = new Point(74, 245);
+                textBoxForExponent.Location = new Point(265, 245);
+                buttonMultSklyar.Location = new Point(74, 280);
+                textBoxForSkalyar.Location = new Point(265, 280);
+                buttonExpMatrix.Location = new Point(73, 315);
+                buttonLogMatrix.Location = new Point(74, 350);
+                buttonSinMatrix.Location = new Point(74, 385);
+                buttonCosMatrix.Location = new Point(73, 420);
+                buttonTangMatrix.Location = new Point(74, 455);
+            }
+            else
+            {
+                buttonSecondMatrixPow.Location = new Point(839, 245);
+                textBoxForSecondExponent.Location = new Point(1029, 245);
+
+                buttonSecondMultSklyar.Location = new Point(840, 283);
+                textBoxForSecondSkalyar.Location = new Point(1029, 283);
+
+                buttonExpSecondMatrix.Location = new Point(839, 318);
+                buttonLogSecondMatrix.Location = new Point(840, 353);
+                buttonSinSecondMatrix.Location = new Point(840, 388);
+                buttonCosSecondMatrix.Location = new Point(839, 423);
+                buttonTangSecondMatrix.Location = new Point(840, 458);
+            }
         }
     }
 }
