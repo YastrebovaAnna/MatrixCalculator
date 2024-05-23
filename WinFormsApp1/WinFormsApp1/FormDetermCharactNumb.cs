@@ -1,18 +1,7 @@
 ﻿using LibraryMatrix;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using LibraryMatrix.core;
+using LibraryMatrix.implementations;
+using LibraryMatrix.interfaces;
 using Label = System.Windows.Forms.Label;
 
 namespace CalcMatrix
@@ -38,8 +27,14 @@ namespace CalcMatrix
         {
             int rows = (int)numericUpDownRowsMatrix.Value;
             int cols = (int)numericUpDownColMatrix.Value;
-            numbers1 = new TextBoxMatrix(rows, cols, 80, 250);
-            Controls.AddRange(numbers1.GetTextBoxes().OfType<Control>().ToArray());
+
+            IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
+            numbers1 = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
+
+            foreach (var dataInput in numbers1.DataInputs)
+            {
+                Controls.Add(((WinFormTextBox)dataInput).GetTextBox());
+            }
         }
         private void buttonDetermSol_Click(object sender, EventArgs e)
         {
@@ -50,6 +45,7 @@ namespace CalcMatrix
                 int cols1 = numbers1.Columns;
                 DetermAndCharact matrix = new DetermAndCharact(rows1, cols1, matrixValues1);
                 ClearResultLabels();
+
                 if (checkBoxDeterm.Checked)
                 {
                     if ((int)numericUpDownRowsMatrix.Value == 1 && (int)numericUpDownColMatrix.Value == 1 || (int)numericUpDownRowsMatrix.Value == 2 && (int)numericUpDownColMatrix.Value == 2)
@@ -140,38 +136,38 @@ namespace CalcMatrix
         }
         public void AddResultLabel(string text, string explanation = "")
         {
-            Label labelResult = new Label();
-            labelResult.Font = new Font("Times New Roman", 12);
-            labelResult.AutoSize = true;
-            labelResult.Text = text;
-            labelResult.Location = new Point(800, resultLabels.Count * 20 + 300);
+            Label labelResult = new Label
+            {
+                Font = new Font("Times New Roman", 12),
+                AutoSize = true,
+                Text = text,
+                Location = new Point(800, resultLabels.Count * 20 + 300)
+            };
             resultLabels.Add(labelResult);
             this.Controls.Add(labelResult);
 
             if (!string.IsNullOrEmpty(explanation))
             {
-                Label labelExplanation = new Label();
-                labelExplanation.AutoSize = true;
-                labelExplanation.TextAlign = ContentAlignment.TopLeft;
-                labelExplanation.Location = new Point(labelX, resultLabels.Count * 40 + 450);
-                labelExplanation.Width = labelWidth;
-                labelExplanation.Font = new Font("Times New Roman", 12);
-                labelExplanation.Text = explanation;
+                Label labelExplanation = new Label
+                {
+                    AutoSize = true,
+                    TextAlign = ContentAlignment.TopLeft,
+                    Location = new Point(labelX, resultLabels.Count * 40 + 450),
+                    Width = labelWidth,
+                    Font = new Font("Times New Roman", 12),
+                    Text = explanation
+                };
                 resultLabels.Add(labelExplanation);
                 this.Controls.Add(labelExplanation);
             }
         }
         private void ClearResultLabels()
         {
-            if (resultLabels != null)
+            foreach (Label label in resultLabels)
             {
-                foreach (Label label in resultLabels)
-                {
-                    this.Controls.Remove(label);
-                    label.Dispose();
-                }
+                this.Controls.Remove(label);
+                label.Dispose();
             }
-
             resultLabels = new List<Label>();
         }
         private void FormDetermCharactNumb_Load(object sender, EventArgs e)
@@ -183,8 +179,9 @@ namespace CalcMatrix
         {
             if (numbers1 != null)
             {
-                foreach (System.Windows.Forms.TextBox textBox in numbers1.GetTextBoxes())
+                foreach (var dataInput in numbers1.DataInputs)
                 {
+                    var textBox = ((WinFormTextBox)dataInput).GetTextBox();
                     if (textBox.Parent == this)
                     {
                         Controls.Remove(textBox);

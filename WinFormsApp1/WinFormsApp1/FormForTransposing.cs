@@ -1,17 +1,7 @@
 ﻿using LibraryMatrix;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using LibraryMatrix.core;
+using LibraryMatrix.implementations;
+using LibraryMatrix.interfaces;
 using Label = System.Windows.Forms.Label;
 using Matrix = LibraryMatrix.Matrix;
 
@@ -19,15 +9,15 @@ namespace CalcMatrix
 {
     public partial class FormForTransposing : Form
     {
-        public TextBoxMatrix numbers1;
-        Matrix matrixs;
-        string explanation = "";
+        private TextBoxMatrix numbers1;
+        private Matrix matrixs;
+        private string explanation = "";
 
         private List<Label> resultLabels = new List<Label>();
-
         private TextBoxMatrix resultMatrix;
         public EventHandler buttonDisplayTextBox_TextChanged { get; private set; }
         public EventHandler MatrixTextBox_TextChanged { get; private set; }
+
         public FormForTransposing()
         {
             InitializeComponent();
@@ -42,14 +32,26 @@ namespace CalcMatrix
         {
             int rows = (int)numericUpDownRowsMatrix.Value;
             int cols = (int)numericUpDownColMatrix.Value;
-            numbers1 = new TextBoxMatrix(rows, cols, 80, 270);
-            Controls.AddRange(numbers1.GetTextBoxes().OfType<Control>().ToArray());
+            numbers1 = CreateAndDisplayMatrix(rows, cols, 80, 270);
+        }
+        private TextBoxMatrix CreateAndDisplayMatrix(int rows, int cols, int startX, int startY)
+        {
+            IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
+            TextBoxMatrix matrix = new TextBoxMatrix(rows, cols, startX, startY, dataInputFactory);
+            AddMatrixToForm(matrix);
+            return matrix;
+        }
 
-            foreach (TextBox textBox in numbers1.GetTextBoxes())
+        private void AddMatrixToForm(TextBoxMatrix matrix)
+        {
+            foreach (IDataInput dataInput in matrix.DataInputs)
             {
+                var textBox = ((WinFormTextBox)dataInput).GetTextBox();
+                Controls.Add(textBox);
                 textBox.TextChanged += MatrixTextBox_TextChanged;
             }
         }
+
         private void buttonTranspositionMatrix_Click_1(object sender, EventArgs e)
         {
             RemoveResultLabels();
@@ -59,144 +61,182 @@ namespace CalcMatrix
         private void CalculateMatrix()
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            if (matrixValues1 != null)
-            {
-                int rows1 = numbers1.Rows;
-                int cols1 = numbers1.Columns;
-                TransposableMatrix matrix = new TransposableMatrix(rows1, cols1, matrixValues1);
-
-                if (checkBoxTransp.Checked)
-                {
-                    matrixs = matrix.Transpose();
-                }
-                else if (checkBoxInvers.Checked)
-                {
-                    if (rows1 != cols1)
-                    {
-                        MessageBox.Show("Матриця має бути квадратною", " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    else
-                    {
-                        double Determinant = matrix.CalculateDeterminantGauss();
-                        if (Determinant == 0)
-                        {
-                            MessageBox.Show("Детермінант дорівнює 0", " Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-                        Matrix result = matrix.Invert();
-                        matrixs = new TransposableMatrix(result.Rows, result.Columns, result.MatrixArray);
-                        string explanation = result.Explanation;
-                        AddResultLabel(explanation);
-                    }
-                }
-                else if (checkBoxRectang.Checked)
-                {
-                    RemoveResultLabels();
-                    RemoveResultTextBoxes();
-                    TransposableMatrix result = matrix.ConvertToDiagonalForm();
-                    matrixs = new TransposableMatrix(result.TriangularMatrix.GetLength(0), result.TriangularMatrix.GetLength(1), result.TriangularMatrix);
-                    string explanation = result.Explanation;
-                    AddResultLabel(explanation);
-                    return;
-                }
-                else if (checkBoxTriangView.Checked)
-                {
-                    RemoveResultLabels();
-                    RemoveResultTextBoxes();
-                    TransposableMatrix result = matrix.ConvertToTriangularFormGausJordan();
-                    matrixs = new TransposableMatrix(result.TriangularMatrix.GetLength(0), result.TriangularMatrix.GetLength(1), result.TriangularMatrix);
-                    string explanation = result.Explanation;
-                    AddResultLabel(explanation);
-                    return;
-                }
-                else if (checkBoxLU.Checked)
-                {
-                    RemoveResultLabels();
-                    RemoveResultTextBoxes();
-                    matrix.PerformLUDecomposition();
-                    double[,] matrixLArray = new double[matrix.Rows, matrix.Columns];
-                    double[,] matrixUArray = new double[matrix.Rows, matrix.Columns];
-
-                    for (int i = 0; i < matrix.Rows; i++)
-                    {
-                        for (int j = 0; j < matrix.Columns; j++)
-                        {
-                            double value = matrix.MatrixArray[i, j];
-                            matrixLArray[i, j] = (i == j) ? 1.0 : 0.0;
-                            matrixUArray[i, j] = (i <= j) ? value : 0.0;
-                            matrixLArray[i, j] = (i <= j) ? 0.0 : value;
-                        }
-                    }
-
-                    int resultRowsL = matrix.Rows;
-                    int resultColsL = matrix.Columns;
-                    TextBoxMatrix matrixL = new TextBoxMatrix(resultRowsL, resultColsL, 500, 500);
-                    TextBox lastTextBox = matrixL.GetLastTextBox();
-                    int textBoxWidth = lastTextBox.Width;
-                    TextBoxMatrix matrixU = new TextBoxMatrix(resultRowsL, resultColsL, textBoxWidth + 5, 500);
-                    matrixL.SetMatrixValues(matrixLArray);
-                    matrixU.SetMatrixValues(matrixUArray);
-                    TextBoxMatrix.SetTextBoxSpacing(matrixL, 1);
-                    TextBoxMatrix.SetTextBoxSpacing(matrixU, 1);
-                    Controls.AddRange(matrixL.GetTextBoxes().OfType<Control>().ToArray());
-                    Controls.AddRange(matrixU.GetTextBoxes().OfType<Control>().ToArray());
-                    matrixL.AutoSizeTextBoxes();
-                    matrixU.AutoSizeTextBoxes();
-                    matrixL.GetTextBoxes().OfType<TextBox>().ToList().ForEach(textBox => textBox.ReadOnly = true);
-                    matrixU.GetTextBoxes().OfType<TextBox>().ToList().ForEach(textBox => textBox.ReadOnly = true);
-                    return;
-                }
-                else if (checkBoxRotate.Checked)
-                {
-                    if (checkBoxSpinsFor.Checked)
-                    {
-                        RemoveResultLabels();
-                        RemoveResultTextBoxes();
-                        Matrix result = matrix.RotateClockwise();
-                        matrixs = new TransposableMatrix(result.Rows, result.Columns, result.MatrixArray);
-                    }
-                    else
-                    {
-                        RemoveResultLabels();
-                        RemoveResultTextBoxes();
-                        Matrix result = matrix.RotateCounterClockwise();
-                        matrixs = new TransposableMatrix(result.Rows, result.Columns, result.MatrixArray);
-                    }
-                }
-                else if (checkBoxSwapRows.Checked)
-                {
-                    RemoveResultLabels();
-                    RemoveResultTextBoxes();
-                    int row1 = (int)numericUpDownRows1Swap.Value;
-                    int row2 = (int)numericUpDownRows2Swap.Value;
-                    matrix.SwapRows(row1, row2);
-                    matrixs = new TransposableMatrix(matrix.Rows, matrix.Columns, matrix.MatrixArray);
-                }
-
-                RemoveResultLabels();
-                RemoveResultTextBoxes();
-                double[,] resultMatrixArray = matrixs.MatrixArray;
-                int resultRows = matrixs.Rows;
-                int resultCols = matrixs.Columns;
-
-                resultMatrix = new TextBoxMatrix(resultRows, resultCols, 750, 500);
-                resultMatrix.SetMatrixValues(resultMatrixArray);
-                Controls.AddRange(resultMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                resultMatrix.GetTextBoxes().OfType<TextBox>().ToList().ForEach(textBox => textBox.ReadOnly = true);
-            }
-            else
+            if (matrixValues1 == null)
             {
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
+
+            int rows1 = numbers1.Rows;
+            int cols1 = numbers1.Columns;
+            TransposableMatrix matrix = new TransposableMatrix(rows1, cols1, matrixValues1);
+
+            if (checkBoxTransp.Checked)
+            {
+                matrixs = matrix.Transpose();
+            }
+            else if (checkBoxInvers.Checked)
+            {
+                HandleMatrixInversion(matrix);
+            }
+            else if (checkBoxRectang.Checked)
+            {
+                HandleRectangularConversion(matrix);
+                return;
+            }
+            else if (checkBoxTriangView.Checked)
+            {
+                HandleTriangularConversion(matrix);
+                return;
+            }
+            else if (checkBoxLU.Checked)
+            {
+                HandleLUDecomposition(matrix);
+                return;
+            }
+            else if (checkBoxRotate.Checked)
+            {
+                HandleMatrixRotation(matrix);
+            }
+            else if (checkBoxSwapRows.Checked)
+            {
+                HandleRowSwap(matrix);
+            }
+
+            DisplayResultMatrix(matrixs);
+        }
+        private void HandleMatrixInversion(TransposableMatrix matrix)
+        {
+            if (matrix.Rows != matrix.Columns)
+            {
+                MessageBox.Show("Матриця має бути квадратною", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            double determinant = matrix.CalculateDeterminantGauss();
+            if (determinant == 0)
+            {
+                MessageBox.Show("Детермінант дорівнює 0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Matrix result = matrix.Invert();
+            if (result == null)
+            {
+                MessageBox.Show("Не вдалося обчислити інверсію матриці.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            matrixs = new TransposableMatrix(result.Rows, result.Columns, result.MatrixArray);
+            explanation = result.Explanation;
+            AddResultLabel(explanation);
+        }
+
+        private void HandleRectangularConversion(TransposableMatrix matrix)
+        {
+            TransposableMatrix result = matrix.ConvertToDiagonalForm();
+            matrixs = new TransposableMatrix(result.TriangularMatrix.GetLength(0), result.TriangularMatrix.GetLength(1), result.TriangularMatrix);
+            explanation = result.Explanation;
+            AddResultLabel(explanation);
+        }
+
+        private void HandleTriangularConversion(TransposableMatrix matrix)
+        {
+            TransposableMatrix result = matrix.ConvertToTriangularFormGausJordan();
+            matrixs = new TransposableMatrix(result.TriangularMatrix.GetLength(0), result.TriangularMatrix.GetLength(1), result.TriangularMatrix);
+            explanation = result.Explanation;
+            AddResultLabel(explanation);
+        }
+
+        private void HandleLUDecomposition(TransposableMatrix matrix)
+        {
+            matrix.PerformLUDecomposition();
+            DisplayLUDecomposition(matrix);
+        }
+
+        private void HandleMatrixRotation(TransposableMatrix matrix)
+        {
+            Matrix result = checkBoxSpinsFor.Checked ? matrix.RotateClockwise() : matrix.RotateCounterClockwise();
+            matrixs = new TransposableMatrix(result.Rows, result.Columns, result.MatrixArray);
+        }
+
+        private void HandleRowSwap(TransposableMatrix matrix)
+        {
+            int row1 = (int)numericUpDownRows1Swap.Value;
+            int row2 = (int)numericUpDownRows2Swap.Value;
+            matrix.SwapRows(row1, row2);
+            matrixs = new TransposableMatrix(matrix.Rows, matrix.Columns, matrix.MatrixArray);
+        }
+
+        private void DisplayLUDecomposition(TransposableMatrix matrix)
+        {
+            double[,] matrixLArray = new double[matrix.Rows, matrix.Columns];
+            double[,] matrixUArray = new double[matrix.Rows, matrix.Columns];
+
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    double value = matrix.MatrixArray[i, j];
+                    matrixLArray[i, j] = (i == j) ? 1.0 : 0.0;
+                    matrixUArray[i, j] = (i <= j) ? value : 0.0;
+                    if (i > j)
+                    {
+                        matrixLArray[i, j] = value;
+                    }
+                }
+            }
+
+            int resultRowsL = matrix.Rows;
+            int resultColsL = matrix.Columns;
+
+            TextBoxMatrix matrixL = CreateAndDisplayMatrix(resultRowsL, resultColsL, 500, 500);
+            TextBox lastTextBoxL = ((WinFormTextBox)matrixL.GetLastDataInput()).GetTextBox();
+            int textBoxWidthL = lastTextBoxL.Width;
+
+            TextBoxMatrix matrixU = CreateAndDisplayMatrix(resultRowsL, resultColsL, 500 + textBoxWidthL + 10, 500);
+
+            matrixL.SetMatrixValues(matrixLArray);
+            matrixU.SetMatrixValues(matrixUArray);
+
+            matrixL.AutoSizeDataInputs();
+            matrixU.AutoSizeDataInputs();
+
+            SetReadOnly(matrixL);
+            SetReadOnly(matrixU);
+        }
+        private void SetReadOnly(TextBoxMatrix matrix)
+        {
+            foreach (var dataInput in matrix.DataInputs)
+            {
+                ((WinFormTextBox)dataInput).GetTextBox().ReadOnly = true;
+            }
+        }
+        private void DisplayResultMatrix(Matrix resultMatrix)
+        {
+            if (resultMatrix == null)
+            {
+                MessageBox.Show("Результуюча матриця пуста.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            double[,] resultMatrixArray = resultMatrix.MatrixArray;
+            int resultRows = resultMatrix.Rows;
+            int resultCols = resultMatrix.Columns;
+
+            this.resultMatrix = CreateAndDisplayMatrix(resultRows, resultCols, 750, 500);
+            this.resultMatrix.SetMatrixValues(resultMatrixArray);
+            SetReadOnly(this.resultMatrix);
         }
 
         private void AddResultLabel(string explanation)
         {
-            Label label = new Label();
-            label.Text = explanation;
-            label.AutoSize = true;
-            label.Location = new Point(100, 500);
+            Label label = new Label
+            {
+                Text = explanation,
+                AutoSize = true,
+                Location = new Point(100, 500)
+            };
             Controls.Add(label);
             resultLabels.Add(label);
         }
@@ -214,11 +254,9 @@ namespace CalcMatrix
 
         private void RemoveResultTextBoxes()
         {
-            TextBox[] textBoxes = Controls.OfType<TextBox>().ToArray();
-
-            foreach (TextBox textBox in textBoxes)
+            foreach (Control control in Controls.OfType<Control>().ToList())
             {
-                if (textBox.ReadOnly)
+                if (control is TextBox textBox && textBox.ReadOnly)
                 {
                     Controls.Remove(textBox);
                     textBox.Dispose();
@@ -229,8 +267,9 @@ namespace CalcMatrix
         {
             if (numbers1 != null)
             {
-                foreach (System.Windows.Forms.TextBox textBox in numbers1.GetTextBoxes())
+                foreach (var dataInput in numbers1.DataInputs)
                 {
+                    var textBox = ((WinFormTextBox)dataInput).GetTextBox();
                     if (textBox.Parent == this)
                     {
                         Controls.Remove(textBox);

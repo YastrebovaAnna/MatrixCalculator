@@ -1,17 +1,8 @@
 ﻿using LibraryMatrix;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using LibraryMatrix.core;
+using LibraryMatrix.implementations;
+using LibraryMatrix.interfaces;
 using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.AxHost;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace WinFormsApp1
 {
@@ -36,94 +27,58 @@ namespace WinFormsApp1
         }
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
-            int rows = (int)numericUpDownRowsFirstMatrix.Value;
-            int cols = (int)numericUpDownColFirstMatrix.Value;
-            numbers1 = new TextBoxMatrix(rows, cols, 80, 240);
-            Controls.AddRange(numbers1.GetTextBoxes().OfType<Control>().ToArray());
+            numbers1 = CreateAndDisplayMatrix((int)numericUpDownRowsFirstMatrix.Value, (int)numericUpDownColFirstMatrix.Value, 80, 240);
 
-            foreach (TextBox textBox in numbers1.GetTextBoxes())
-            {
-                textBox.TextChanged += MatrixTextBox_TextChanged;
-            }
-            TextBox lastTextBox = numbers1.GetLastTextBox();
-
-            if (lastTextBox != null)
-            {
-                int newY = lastTextBox.Location.Y + lastTextBox.Height + 10;
-                buttonMatrixPow.Location = new Point(buttonMatrixPow.Location.X, newY);
-
-                int newTextBoxForExponentY = newY;
-                int newTextBoxForExponentX = buttonMatrixPow.Location.X + buttonMatrixPow.Width + 0;
-                textBoxForExponent.Location = new Point(newTextBoxForExponentX, newTextBoxForExponentY);
-
-                int newButtonMultSklyarY = newY + buttonMatrixPow.Height + 10;
-                buttonMultSklyar.Location = new Point(buttonMultSklyar.Location.X, newButtonMultSklyarY);
-
-                int newTextBoxForSkalyarY = newTextBoxForExponentY + textBoxForExponent.Height + 10;
-                textBoxForSkalyar.Location = new Point(textBoxForSkalyar.Location.X, newTextBoxForSkalyarY);
-
-                int newButtonExpMatrixY = newButtonMultSklyarY + buttonMultSklyar.Height + 10;
-                buttonExpMatrix.Location = new Point(buttonExpMatrix.Location.X, newButtonExpMatrixY);
-
-                int newButtonLogMatrixY = newButtonExpMatrixY + buttonExpMatrix.Height + 10;
-                buttonLogMatrix.Location = new Point(buttonLogMatrix.Location.X, newButtonLogMatrixY);
-
-                int newButtonSinMatrixY = newButtonLogMatrixY + buttonLogMatrix.Height + 10;
-                buttonSinMatrix.Location = new Point(buttonSinMatrix.Location.X, newButtonSinMatrixY);
-
-                int newButtonCosMatrixY = newButtonSinMatrixY + buttonSinMatrix.Height + 10;
-                buttonCosMatrix.Location = new Point(buttonCosMatrix.Location.X, newButtonCosMatrixY);
-
-                int newButtonTangMatrixY = newButtonCosMatrixY + buttonCosMatrix.Height + 10;
-                buttonTangMatrix.Location = new Point(buttonTangMatrix.Location.X, newButtonTangMatrixY);
-            }
         }
 
         private void buttonDisplaySecondMatrix_Click(object sender, EventArgs e)
         {
-            int rows = (int)numericUpDownRowsSecondMatrix.Value;
-            int cols = (int)numericUpDownColSecondMatrix.Value;
-            numbers2 = new TextBoxMatrix(rows, cols, 840, 240);
-            Controls.AddRange(numbers2.GetTextBoxes().OfType<Control>().ToArray());
+            numbers2 = CreateAndDisplayMatrix((int)numericUpDownRowsSecondMatrix.Value, (int)numericUpDownColSecondMatrix.Value, 840, 240);
 
-            foreach (TextBox textBox in numbers2.GetTextBoxes())
+        }
+
+        private TextBoxMatrix CreateAndDisplayMatrix(int rows, int cols, int startX, int startY)
+        {
+            IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
+            TextBoxMatrix matrix = new TextBoxMatrix(rows, cols, startX, startY, dataInputFactory);
+            AddMatrixToForm(matrix);
+            return matrix;
+        }
+
+        private void AddMatrixToForm(TextBoxMatrix matrix)
+        {
+            foreach (var dataInput in matrix.DataInputs)
             {
+                var textBox = ((WinFormTextBox)dataInput).GetTextBox();
+                Controls.Add(textBox);
                 textBox.TextChanged += MatrixTextBox_TextChanged;
             }
-            TextBox lastTextBox = numbers2.GetLastTextBox();
 
+            AdjustButtons(matrix);
+        }
+        private void AdjustButtons(TextBoxMatrix matrix)
+        {
+            var lastTextBox = ((WinFormTextBox)matrix.GetLastDataInput()).GetTextBox();
             if (lastTextBox != null)
             {
                 int newY = lastTextBox.Location.Y + lastTextBox.Height + 10;
-                buttonSecondMatrixPow.Location = new Point(buttonSecondMatrixPow.Location.X, newY);
-
-                int newTextBoxForExponentY = newY;
-                int newTextBoxForExponentX = buttonSecondMatrixPow.Location.X + buttonSecondMatrixPow.Width + 0;
-                textBoxForSecondExponent.Location = new Point(newTextBoxForExponentX, newTextBoxForExponentY);
-
-                int newButtonMultSklyarY = newY + buttonSecondMatrixPow.Height + 10;
-                buttonSecondMultSklyar.Location = new Point(buttonSecondMultSklyar.Location.X, newButtonMultSklyarY);
-
-                int newTextBoxForSkalyarY = newTextBoxForExponentY + textBoxForSecondExponent.Height + 10;
-                textBoxForSecondSkalyar.Location = new Point(textBoxForSecondSkalyar.Location.X, newTextBoxForSkalyarY);
-
-                int newButtonExpMatrixY = newButtonMultSklyarY + buttonMultSklyar.Height + 10;
-                buttonExpSecondMatrix.Location = new Point(buttonExpSecondMatrix.Location.X, newButtonExpMatrixY);
-
-                int newButtonLogMatrixY = newButtonExpMatrixY + buttonExpSecondMatrix.Height + 10;
-                buttonLogSecondMatrix.Location = new Point(buttonLogSecondMatrix.Location.X, newButtonLogMatrixY);
-
-                int newButtonSinMatrixY = newButtonLogMatrixY + buttonLogSecondMatrix.Height + 10;
-                buttonSinSecondMatrix.Location = new Point(buttonSinSecondMatrix.Location.X, newButtonSinMatrixY);
-
-                int newButtonCosMatrixY = newButtonSinMatrixY + buttonSinSecondMatrix.Height + 10;
-                buttonCosSecondMatrix.Location = new Point(buttonCosSecondMatrix.Location.X, newButtonCosMatrixY);
-
-                int newButtonTangMatrixY = newButtonCosMatrixY + buttonCosSecondMatrix.Height + 10;
-                buttonTangSecondMatrix.Location = new Point(buttonTangSecondMatrix.Location.X, newButtonTangMatrixY);
+                SetButtonPositions(newY);
             }
         }
+        private void SetButtonPositions(int newY)
+        {
+            buttonMatrixPow.Location = new Point(buttonMatrixPow.Location.X, newY);
+            textBoxForExponent.Location = new Point(buttonMatrixPow.Location.X + buttonMatrixPow.Width + 0, newY);
 
+            buttonMultSklyar.Location = new Point(buttonMultSklyar.Location.X, newY + buttonMatrixPow.Height + 10);
+            textBoxForSkalyar.Location = new Point(textBoxForSkalyar.Location.X, newY + textBoxForExponent.Height + 10);
+
+            buttonExpMatrix.Location = new Point(buttonExpMatrix.Location.X, newY + buttonMatrixPow.Height + buttonMultSklyar.Height + 20);
+            buttonLogMatrix.Location = new Point(buttonLogMatrix.Location.X, buttonExpMatrix.Location.Y + buttonExpMatrix.Height + 10);
+            buttonSinMatrix.Location = new Point(buttonSinMatrix.Location.X, buttonLogMatrix.Location.Y + buttonLogMatrix.Height + 10);
+            buttonCosMatrix.Location = new Point(buttonCosMatrix.Location.X, buttonSinMatrix.Location.Y + buttonSinMatrix.Height + 10);
+            buttonTangMatrix.Location = new Point(buttonTangMatrix.Location.X, buttonCosMatrix.Location.Y + buttonCosMatrix.Height + 10);
+        }
 
         private void buttonSol_Click(object sender, EventArgs e)
         {
@@ -137,797 +92,342 @@ namespace WinFormsApp1
                 int cols2 = numbers2.Columns;
                 MatrixArithmeticOp matrix1 = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
                 MatrixArithmeticOp matrix2 = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                Label LabelComparison = new Label();
-                LabelComparison.ForeColor = Color.Black;
-                LabelComparison.Font = new Font("Times New Roman", 12);
+
                 if (comboBoxChooseOp.SelectedIndex == 0)
                 {
-                    if (matrix1.Rows != matrix2.Rows || matrix1.Columns != matrix2.Columns)
-                    {
-                        MessageBox.Show("Дві матриці можуть бути додані, якщо вони мають однаковий розмір", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-                    else
-                        resultMatrix = matrix1 + matrix2;
+                    resultMatrix = PerformMatrixAddition(matrix1, matrix2);
                 }
-
                 else if (comboBoxChooseOp.SelectedIndex == 1)
                 {
-                    if (matrix1.Rows != matrix2.Rows || matrix1.Columns != matrix2.Columns)
-                    {
-                        MessageBox.Show("Віднімання матриць виконується лише за умови, якщо вони однакового розміру", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-                    else
-                        resultMatrix = matrix1 - matrix2;
+                    resultMatrix = PerformMatrixSubtraction(matrix1, matrix2);
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 2)
                 {
-
-                    if (matrix1.Columns != matrix2.Rows)
-                    {
-                        MessageBox.Show("Дві матриці можуть бути помножені, якщо кількість стовпців першої матриці співпадає з кількістю рядків другої матриці", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-                    else
-                        resultMatrix = matrix1 * matrix2;
+                    resultMatrix = PerformMatrixMultiplication(matrix1, matrix2);
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 3)
                 {
-
-                    if (matrix1 == matrix2)
-                    {
-                        MessageBox.Show("Матриці рівні", "Перевірка матриць на рівність", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Матриці не рівні", "Перевірка матриць на рівність", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    CompareMatrices(matrix1, matrix2);
                     return;
                 }
 
-                resultMatrixArray = resultMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null)
+                if (resultMatrix != null)
                 {
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-                else
-                {
-                    foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                    {
-                        Controls.Remove(textBox);
-                    }
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                    textBox.MinimumSize = new Size(60, textBox.MinimumSize.Height);
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
             }
             else
             {
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        private MatrixArithmeticOp PerformMatrixAddition(MatrixArithmeticOp matrix1, MatrixArithmeticOp matrix2)
+        {
+            if (matrix1.Rows != matrix2.Rows || matrix1.Columns != matrix2.Columns)
+            {
+                MessageBox.Show("Дві матриці можуть бути додані, якщо вони мають однаковий розмір", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
+            return matrix1 + matrix2;
+        }
+
+        private MatrixArithmeticOp PerformMatrixSubtraction(MatrixArithmeticOp matrix1, MatrixArithmeticOp matrix2)
+        {
+            if (matrix1.Rows != matrix2.Rows || matrix1.Columns != matrix2.Columns)
+            {
+                MessageBox.Show("Віднімання матриць виконується лише за умови, якщо вони однакового розміру", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
+            return matrix1 - matrix2;
+        }
+
+        private MatrixArithmeticOp PerformMatrixMultiplication(MatrixArithmeticOp matrix1, MatrixArithmeticOp matrix2)
+        {
+            if (matrix1.Columns != matrix2.Rows)
+            {
+                MessageBox.Show("Дві матриці можуть бути помножені, якщо кількість стовпців першої матриці співпадає з кількістю рядків другої матриці", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
+            return matrix1 * matrix2;
+        }
+
+        private void CompareMatrices(MatrixArithmeticOp matrix1, MatrixArithmeticOp matrix2)
+        {
+            if (matrix1 == matrix2)
+            {
+                MessageBox.Show("Матриці рівні", "Перевірка матриць на рівність", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Матриці не рівні", "Перевірка матриць на рівність", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void DisplayResultMatrix()
+        {
+            resultMatrixArray = resultMatrix.MatrixArray;
+            if (resultTextBoxMatrix != null)
+            {
+                foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
+                {
+                    Controls.Remove(textBox);
+                }
+            }
+
+            resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70, new WinFormDataInputFactory());
+            AddMatrixToForm(resultTextBoxMatrix);
+            resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
+
+            foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
+            {
+                textBox.ReadOnly = true;
+            }
+
+            resultTextBoxMatrix.AutoSizeDataInputs();
+            AdjustResultMatrixLayout();
+        }
+
+        private void AdjustResultMatrixLayout()
+        {
+            int leftMargin = ((WinFormTextBox)resultTextBoxMatrix.DataInputs[0, 0]).GetTextBox().Left;
+            for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
+            {
+                for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
+                {
+                    ((WinFormTextBox)resultTextBoxMatrix.DataInputs[i, j]).GetTextBox().Left = ((WinFormTextBox)resultTextBoxMatrix.DataInputs[i, j - 1]).GetTextBox().Right + 10;
+                }
             }
         }
         private void buttonMatrixPow_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
-            int exponent = 0;
-            if (!string.IsNullOrEmpty(textBoxForExponent.Text))
+            int exponent = GetExponentValue(textBoxForExponent);
+            if (matrixValues1 != null && exponent >= 0)
             {
-                exponent = int.Parse(textBoxForExponent.Text);
-            }
-            else
-            {
-                MessageBox.Show("Введіть значення для показника степеня", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            if (matrixValues1 != null)
-            {
-                MatrixArithmeticOp matrix1 = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                resultMatrix = matrix1 ^ exponent;
-                resultMatrixArray = resultMatrix.MatrixArray;
-                if (resultTextBoxMatrix == null)
+                resultMatrix = PerformMatrixExponentiation(matrixValues1, exponent);
+                if (resultMatrix != null)
                 {
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-                else
-                {
-                    foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                    {
-                        Controls.Remove(textBox);
-                    }
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private int GetExponentValue(TextBox exponentTextBox)
+        {
+            if (!string.IsNullOrEmpty(exponentTextBox.Text) && int.TryParse(exponentTextBox.Text, out int exponent))
+            {
+                return exponent;
+            }
+            MessageBox.Show("Введіть значення для показника степеня", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return -1;
+        }
+        private MatrixArithmeticOp PerformMatrixExponentiation(double[,] matrixValues, int exponent)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix ^ exponent;
+        }
         private void buttonMultSklyar_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
-            int skalyar = 0;
-            if (!string.IsNullOrEmpty(textBoxForSkalyar.Text))
+            double scalar = GetScalarValue(textBoxForSkalyar);
+            if (matrixValues1 != null && scalar != double.MinValue)
             {
-                skalyar = int.Parse(textBoxForSkalyar.Text);
-            }
-            else
-            {
-                MessageBox.Show("Введіть значення скаляра", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            if (matrixValues1 != null)
-            {
-                MatrixArithmeticOp matrix1 = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                resultMatrix = matrix1 * skalyar;
-                resultMatrixArray = resultMatrix.MatrixArray;
-                if (resultTextBoxMatrix == null)
+                resultMatrix = PerformMatrixScalarMultiplication(matrixValues1, scalar);
+                if (resultMatrix != null)
                 {
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-                else
-                {
-                    foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                    {
-                        Controls.Remove(textBox);
-                    }
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+        private double GetScalarValue(TextBox scalarTextBox)
+        {
+            if (!string.IsNullOrEmpty(scalarTextBox.Text) && double.TryParse(scalarTextBox.Text, out double scalar))
+            {
+                return scalar;
+            }
+            MessageBox.Show("Введіть значення скаляра", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return double.MinValue;
+        }
 
+        private MatrixArithmeticOp PerformMatrixScalarMultiplication(double[,] matrixValues, double scalar)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix * scalar;
+        }
         private void buttonSecondMatrixPow_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
-            int exponent = 0;
-            if (!string.IsNullOrEmpty(textBoxForSecondExponent.Text))
+            int exponent = GetExponentValue(textBoxForSecondExponent);
+            if (matrixValues2 != null && exponent >= 0)
             {
-                exponent = int.Parse(textBoxForSecondExponent.Text);
-            }
-            else
-            {
-                MessageBox.Show("Введіть значення для показника степеня", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            if (matrixValues2 != null)
-            {
-                MatrixArithmeticOp matrix1 = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                resultMatrix = matrix1 ^ exponent;
-                resultMatrixArray = resultMatrix.MatrixArray;
-                if (resultTextBoxMatrix == null)
+                resultMatrix = PerformMatrixExponentiation(matrixValues2, exponent);
+                if (resultMatrix != null)
                 {
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-                else
-                {
-                    foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                    {
-                        Controls.Remove(textBox);
-                    }
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void buttonSecondMultSklyar_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
-            double skalyar = 0;
-            if (!string.IsNullOrEmpty(textBoxForSecondSkalyar.Text))
+            double scalar = GetScalarValue(textBoxForSecondSkalyar);
+            if (matrixValues2 != null && scalar != double.MinValue)
             {
-                skalyar = double.Parse(textBoxForSecondSkalyar.Text);
-            }
-            else
-            {
-                MessageBox.Show("Введіть значення скаляра", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            if (matrixValues2 != null)
-            {
-                MatrixArithmeticOp matrix1 = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                resultMatrix = matrix1 * skalyar;
-                resultMatrixArray = resultMatrix.MatrixArray;
-                if (resultTextBoxMatrix == null)
+                resultMatrix = PerformMatrixScalarMultiplication(matrixValues2, scalar);
+                if (resultMatrix != null)
                 {
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-                else
-                {
-                    foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                    {
-                        Controls.Remove(textBox);
-                    }
-                    resultTextBoxMatrix = new TextBoxMatrix(resultMatrix.Rows, resultMatrix.Columns, buttonTangMatrix.Location.X, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
         private void buttonExpMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
             if (matrixValues1 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                MatrixArithmeticOp expMatrix = matrix.Exp();
-                resultMatrixArray = expMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != expMatrix.Rows || resultTextBoxMatrix.Columns != expMatrix.Columns)
+                resultMatrix = PerformMatrixExponential(matrixValues1);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(expMatrix.Rows, expMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private MatrixArithmeticOp PerformMatrixExponential(double[,] matrixValues)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix.Exp();
+        }
         private void buttonLogMatrix_Click(object sender, EventArgs e)
         {
 
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
             if (matrixValues1 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                MatrixArithmeticOp logMatrix = matrix.Log();
-                resultMatrixArray = logMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != logMatrix.Rows || resultTextBoxMatrix.Columns != logMatrix.Columns)
+                resultMatrix = PerformMatrixLogarithm(matrixValues1);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(logMatrix.Rows, logMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private MatrixArithmeticOp PerformMatrixLogarithm(double[,] matrixValues)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix.Log();
+        }
         private void buttonSinMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
             if (matrixValues1 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                MatrixArithmeticOp sinMatrix = matrix.Sin();
-                resultMatrixArray = sinMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != sinMatrix.Rows || resultTextBoxMatrix.Columns != sinMatrix.Columns)
+                resultMatrix = PerformMatrixSine(matrixValues1);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(sinMatrix.Rows, sinMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private MatrixArithmeticOp PerformMatrixSine(double[,] matrixValues)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix.Sin();
+        }
         private void buttonCosMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
             if (matrixValues1 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                MatrixArithmeticOp cosMatrix = matrix.Cos();
-                resultMatrixArray = cosMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != cosMatrix.Rows || resultTextBoxMatrix.Columns != cosMatrix.Columns)
+                resultMatrix = PerformMatrixCosine(matrixValues1);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(cosMatrix.Rows, cosMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private MatrixArithmeticOp PerformMatrixCosine(double[,] matrixValues)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix.Cos();
+        }
         private void buttonTangMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            int rows1 = numbers1.Rows;
-            int cols1 = numbers1.Columns;
             if (matrixValues1 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows1, cols1, matrixValues1);
-                MatrixArithmeticOp tanMatrix = matrix.Tan();
-                resultMatrixArray = tanMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != tanMatrix.Rows || resultTextBoxMatrix.Columns != tanMatrix.Columns)
+                resultMatrix = PerformMatrixTangent(matrixValues1);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(tanMatrix.Rows, tanMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangMatrix.Location.Y + buttonTangMatrix.Height + 70);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        private MatrixArithmeticOp PerformMatrixTangent(double[,] matrixValues)
+        {
+            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+            return matrix.Tan();
+        }
         private void buttonExpSecondMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
             if (matrixValues2 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                MatrixArithmeticOp expMatrix = matrix.Exp();
-                resultMatrixArray = expMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != expMatrix.Rows || resultTextBoxMatrix.Columns != expMatrix.Columns)
+                resultMatrix = PerformMatrixExponential(matrixValues2);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(expMatrix.Rows, expMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void buttonLogSecondMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
             if (matrixValues2 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                MatrixArithmeticOp logMatrix = matrix.Log();
-                resultMatrixArray = logMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != logMatrix.Rows || resultTextBoxMatrix.Columns != logMatrix.Columns)
+                resultMatrix = PerformMatrixLogarithm(matrixValues2);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(logMatrix.Rows, logMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void buttonSinSecondMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
             if (matrixValues2 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                MatrixArithmeticOp sinMatrix = matrix.Sin();
-                resultMatrixArray = sinMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != sinMatrix.Rows || resultTextBoxMatrix.Columns != sinMatrix.Columns)
+                resultMatrix = PerformMatrixSine(matrixValues2);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(sinMatrix.Rows, sinMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left =  resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void buttonCosSecondMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
             if (matrixValues2 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                MatrixArithmeticOp cosMatrix = matrix.Cos();
-                resultMatrixArray = cosMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != cosMatrix.Rows || resultTextBoxMatrix.Columns != cosMatrix.Columns)
+                resultMatrix = PerformMatrixCosine(matrixValues2);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(cosMatrix.Rows, cosMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void buttonTangSecondMatrix_Click(object sender, EventArgs e)
         {
             double[,] matrixValues2 = TextBoxMatrix.GetMatrixValues(numbers2);
-            int rows2 = numbers2.Rows;
-            int cols2 = numbers2.Columns;
             if (matrixValues2 != null)
             {
-                MatrixArithmeticOp matrix = new MatrixArithmeticOp(rows2, cols2, matrixValues2);
-                MatrixArithmeticOp tanMatrix = matrix.Tan();
-                resultMatrixArray = tanMatrix.MatrixArray;
-
-                if (resultTextBoxMatrix == null || resultTextBoxMatrix.Rows != tanMatrix.Rows || resultTextBoxMatrix.Columns != tanMatrix.Columns)
+                resultMatrix = PerformMatrixTangent(matrixValues2);
+                if (resultMatrix != null)
                 {
-                    if (resultTextBoxMatrix != null)
-                    {
-                        foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                        {
-                            Controls.Remove(textBox);
-                        }
-                    }
-
-                    resultTextBoxMatrix = new TextBoxMatrix(tanMatrix.Rows, tanMatrix.Columns, buttonTangMatrix.Location.X + 320, buttonTangSecondMatrix.Location.Y + buttonTangSecondMatrix.Height + 40);
-                    Controls.AddRange(resultTextBoxMatrix.GetTextBoxes().OfType<Control>().ToArray());
+                    DisplayResultMatrix();
                 }
-
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-                foreach (TextBox textBox in resultTextBoxMatrix.GetTextBoxes())
-                {
-                    textBox.ReadOnly = true;
-                }
-
-                resultTextBoxMatrix.AutoSizeTextBoxes();
-
-                int leftMargin = resultTextBoxMatrix.GetTextBoxes()[0, 0].Left;
-                for (int i = 0; i < resultTextBoxMatrix.Rows; i++)
-                {
-                    for (int j = 1; j < resultTextBoxMatrix.Columns; j++)
-                    {
-                        resultTextBoxMatrix.GetTextBoxes()[i, j].Left = resultTextBoxMatrix.GetTextBoxes()[i, j - 1].Right + 10;
-                    }
-                }
-                resultTextBoxMatrix.SetMatrixValues(resultMatrixArray);
-            }
-            else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -935,21 +435,8 @@ namespace WinFormsApp1
         {
             if (numbers1 != null)
             {
-                foreach (TextBox textBox in numbers1.GetTextBoxes())
-                {
-                    Controls.Remove(textBox);
-                    textBox.Dispose();
-
-                }
-                buttonMatrixPow.Location = new Point(74, 245);
-                textBoxForExponent.Location = new Point(265, 245);
-                buttonMultSklyar.Location = new Point(74, 280);
-                textBoxForSkalyar.Location = new Point(265, 280);
-                buttonExpMatrix.Location = new Point(73, 315);
-                buttonLogMatrix.Location = new Point(74, 350);
-                buttonSinMatrix.Location = new Point(74, 385);
-                buttonCosMatrix.Location = new Point(73, 420);
-                buttonTangMatrix.Location = new Point(74, 455);
+                ClearMatrix(numbers1);
+                ResetButtonPositions();
             }
         }
 
@@ -957,25 +444,30 @@ namespace WinFormsApp1
         {
             if (numbers2 != null)
             {
-                foreach (TextBox textBox in numbers2.GetTextBoxes())
-                {
-                    Controls.Remove(textBox);
-                    textBox.Dispose();
-                }
-                buttonSecondMatrixPow.Location = new Point(839, 245);
-                textBoxForSecondExponent.Location = new Point(1029, 245);
-                buttonSecondMultSklyar.Location = new Point(840, 283);
-                textBoxForSecondSkalyar.Location = new Point(1029, 283);
-                buttonExpSecondMatrix.Location = new Point(839, 318);
-                buttonLogSecondMatrix.Location = new Point(840, 353);
-                buttonSinSecondMatrix.Location = new Point(840, 388);
-                buttonCosSecondMatrix.Location = new Point(839, 423);
-                buttonTangSecondMatrix.Location = new Point(840, 458);
+                ClearMatrix(numbers2);
+                ResetButtonPositions();
             }
+        }
+        private void ClearMatrix(TextBoxMatrix matrix)
+        {
+            foreach (var textBox in matrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
+            {
+                Controls.Remove(textBox);
+                textBox.Dispose();
+            }
+        }
+
+        private void ResetButtonPositions()
+        {
+            buttonMatrixPow.Location = new Point(74, 245);
+            textBoxForExponent.Location = new Point(265, 245);
+            buttonMultSklyar.Location = new Point(74, 280);
+            textBoxForSkalyar.Location = new Point(265, 280);
+            buttonExpMatrix.Location = new Point(73, 315);
+            buttonLogMatrix.Location = new Point(74, 350);
+            buttonSinMatrix.Location = new Point(74, 385);
+            buttonCosMatrix.Location = new Point(73, 420);
+            buttonTangMatrix.Location = new Point(74, 455);
         }
     }
 }
-
-
-
-
