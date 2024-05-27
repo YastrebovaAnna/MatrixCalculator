@@ -160,7 +160,18 @@ namespace WinFormsApp1
                 {
                     resultMatrix = PerformMatrixMultiplication(matrix1, matrix2);
                 }
-
+                else if (comboBoxChooseOp.SelectedIndex == 3)
+                {
+                    resultMatrix = PerformMatrixEquality(matrix1, matrix2);
+                    MessageBox.Show(resultMatrix.MatrixArray[0, 0] == 1.0 ? "Matrices are equal" : "Matrices are not equal", "Comparison Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else if (comboBoxChooseOp.SelectedIndex == 4)
+                {
+                    resultMatrix = PerformMatrixInequality(matrix1, matrix2);
+                    MessageBox.Show(resultMatrix.MatrixArray[0, 0] == 1.0 ? "Matrices are not equal" : "Matrices are equal", "Comparison Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 if (resultMatrix != null)
                 {
                     DisplayResultMatrix(resultMatrix);
@@ -188,7 +199,17 @@ namespace WinFormsApp1
             IMatrixOperation mulOperation = new MultiplicationOperation();
             return mulOperation.Execute(matrix1, matrix2);
         }
+        private IMatrix PerformMatrixEquality(IMatrix matrix1, IMatrix matrix2)
+        {
+            IMatrixOperation equalityOperation = new EqualityOperation();
+            return equalityOperation.Execute(matrix1, matrix2);
+        }
 
+        private IMatrix PerformMatrixInequality(IMatrix matrix1, IMatrix matrix2)
+        {
+            IMatrixOperation inequalityOperation = new InequalityOperation();
+            return inequalityOperation.Execute(matrix1, matrix2);
+        }
         private void buttonMatrixPow_Click(object sender, EventArgs e)
         {
             //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
@@ -211,11 +232,12 @@ namespace WinFormsApp1
             MessageBox.Show("Введіть значення для показника степеня", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return -1;
         }
-        private MatrixArithmeticOp PerformMatrixExponentiation(double[,] matrixValues, int exponent)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix ^ exponent;
-        }
+        
+        //private MatrixArithmeticOp PerformMatrixExponentiation(double[,] matrixValues, int exponent)
+        //{
+        //    MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
+        //    return matrix ^ exponent;
+        //}
         private void buttonMultSklyar_Click(object sender, EventArgs e)
         {
             //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
@@ -239,11 +261,7 @@ namespace WinFormsApp1
             return double.MinValue;
         }
 
-        private MatrixArithmeticOp PerformMatrixScalarMultiplication(double[,] matrixValues, double scalar)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix * scalar;
-        }
+        
         private void buttonSecondMatrixPow_Click(object sender, EventArgs e)
         {
             //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
