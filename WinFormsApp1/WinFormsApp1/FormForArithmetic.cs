@@ -1,4 +1,5 @@
 ﻿using LibraryMatrix;
+using LibraryMatrix.calculator;
 using LibraryMatrix.core;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
@@ -12,7 +13,6 @@ namespace WinFormsApp1
         public TextBoxMatrix numbers1;
         public TextBoxMatrix numbers2;
         public TextBoxMatrix resultTextBoxMatrix;
-        public MatrixArithmeticOp resultMatrix;
         private EventHandler MatrixTextBox_TextChanged;
         public TextBoxMatrix textBoxMatrix1 { get; private set; }
 
@@ -182,33 +182,36 @@ namespace WinFormsApp1
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+        private IMatrix PerformMatrixOperation(IMatrix matrix1, IMatrix matrix2, IMatrixOperation operation)
+        {
+            MatrixContext context = new MatrixContext();
+            context.SetStrategy(operation);
+            return context.ExecuteOperation(matrix1, matrix2);
+        }
+
         private IMatrix PerformMatrixAddition(IMatrix matrix1, IMatrix matrix2)
         {
-            IMatrixOperation addOperation = new AddOperation();
-            return addOperation.Execute(matrix1, matrix2);
+            return PerformMatrixOperation(matrix1, matrix2, new AddOperation());
         }
 
         private IMatrix PerformMatrixSubtraction(IMatrix matrix1, IMatrix matrix2)
         {
-            IMatrixOperation subOperation = new SubtractionOperation();
-            return subOperation.Execute(matrix1, matrix2);
+            return PerformMatrixOperation(matrix1, matrix2, new SubtractionOperation());
         }
 
         private IMatrix PerformMatrixMultiplication(IMatrix matrix1, IMatrix matrix2)
         {
-            IMatrixOperation mulOperation = new MultiplicationOperation();
-            return mulOperation.Execute(matrix1, matrix2);
+            return PerformMatrixOperation(matrix1, matrix2, new MultiplicationOperation());
         }
+
         private IMatrix PerformMatrixEquality(IMatrix matrix1, IMatrix matrix2)
         {
-            IMatrixOperation equalityOperation = new EqualityOperation();
-            return equalityOperation.Execute(matrix1, matrix2);
+            return PerformMatrixOperation(matrix1, matrix2, new EqualityOperation());
         }
 
         private IMatrix PerformMatrixInequality(IMatrix matrix1, IMatrix matrix2)
         {
-            IMatrixOperation inequalityOperation = new InequalityOperation();
-            return inequalityOperation.Execute(matrix1, matrix2);
+            return PerformMatrixOperation(matrix1, matrix2, new InequalityOperation());
         }
         private void buttonMatrixPow_Click(object sender, EventArgs e)
         {

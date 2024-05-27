@@ -16,16 +16,14 @@ namespace LibraryMatrix.operations
             if (matrixA.Rows != matrixB.Rows || matrixA.Columns != matrixB.Columns)
                 return new Matrix(1, 1, new double[,] { { 0.0 } });
 
-            for (int i = 0; i < matrixA.Rows; i++)
+            var equal = true;
+            MatrixProcessor.IterateOverMatrix(matrixA.Rows, matrixA.Columns, (i, j) =>
             {
-                for (int j = 0; j < matrixA.Columns; j++)
-                {
-                    if (matrixA.MatrixArray[i, j] != matrixB.MatrixArray[i, j])
-                        return new Matrix(1, 1, new double[,] { { 0.0 } });
-                }
-            }
+                if (matrixA.MatrixArray[i, j] != matrixB.MatrixArray[i, j])
+                    equal = false;
+            });
 
-            return new Matrix(1, 1, new double[,] { { 1.0 } });
+            return new Matrix(1, 1, new double[,] { { equal ? 1.0 : 0.0 } });
         }
     }
 }

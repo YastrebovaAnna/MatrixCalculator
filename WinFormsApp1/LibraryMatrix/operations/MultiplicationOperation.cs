@@ -13,16 +13,13 @@ namespace LibraryMatrix.operations
             }
 
             var result = new double[matrixA.Rows, matrixB.Columns];
-            for (int i = 0; i < matrixA.Rows; i++)
+            MatrixProcessor.IterateOverMatrix(matrixA.Rows, matrixB.Columns, (i, j) =>
             {
-                for (int j = 0; j < matrixB.Columns; j++)
+                for (int k = 0; k < matrixA.Columns; k++)
                 {
-                    for (int k = 0; k < matrixA.Columns; k++)
-                    {
-                        result[i, j] += matrixA.MatrixArray[i, k] * matrixB.MatrixArray[k, j];
-                    }
+                    result[i, j] += matrixA.MatrixArray[i, k] * matrixB.MatrixArray[k, j];
                 }
-            }
+            });
             return new Matrix(matrixA.Rows, matrixB.Columns, result);
         }
     }
