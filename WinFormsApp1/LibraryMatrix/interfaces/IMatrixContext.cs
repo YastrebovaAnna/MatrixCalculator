@@ -17,5 +17,13 @@ namespace LibraryMatrix.interfaces
         double ExecuteTraceOperation(IMatrix matrix);
         double ExecuteElementFinderOperation(IMatrix matrix);
         double ExecuteNormOperation(IMatrix matrix);
+        void SetStrategy(ITransposeOperation operation);
+        void SetStrategy(IInvertOperation operation);
+        void SetStrategy(IRotateClockwiseOperation operation);
+        void SetStrategy(IRotateCounterClockwiseOperation operation);
+        IMatrix ExecuteTransposeOperation(IMatrix matrix);
+        IMatrix ExecuteInvertOperation(IMatrix matrix);
+        IMatrix ExecuteRotateClockwiseOperation(IMatrix matrix);
+        IMatrix ExecuteRotateCounterClockwiseOperation(IMatrix matrix);
     }
 }
