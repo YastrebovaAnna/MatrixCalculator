@@ -14,8 +14,6 @@ namespace WinFormsApp1
         public TextBoxMatrix numbers2;
         public TextBoxMatrix resultTextBoxMatrix;
         private EventHandler MatrixTextBox_TextChanged;
-        public TextBoxMatrix textBoxMatrix1 { get; private set; }
-
         public FormForArithmetic()
         {
             InitializeComponent();
@@ -150,25 +148,25 @@ namespace WinFormsApp1
 
                 if (comboBoxChooseOp.SelectedIndex == 0)
                 {
-                    resultMatrix = PerformMatrixAddition(matrix1, matrix2);
+                    resultMatrix = MatrixOperations.PerformMatrixAddition(matrix1, matrix2);
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 1)
                 {
-                    resultMatrix = PerformMatrixSubtraction(matrix1, matrix2);
+                    resultMatrix = MatrixOperations.PerformMatrixSubtraction(matrix1, matrix2);
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 2)
                 {
-                    resultMatrix = PerformMatrixMultiplication(matrix1, matrix2);
+                    resultMatrix = MatrixOperations.PerformMatrixMultiplication(matrix1, matrix2);
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 3)
                 {
-                    resultMatrix = PerformMatrixEquality(matrix1, matrix2);
+                    resultMatrix = MatrixOperations.PerformMatrixEquality(matrix1, matrix2);
                     MessageBox.Show(resultMatrix.MatrixArray[0, 0] == 1.0 ? "Matrices are equal" : "Matrices are not equal", "Comparison Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 else if (comboBoxChooseOp.SelectedIndex == 4)
                 {
-                    resultMatrix = PerformMatrixInequality(matrix1, matrix2);
+                    resultMatrix = MatrixOperations.PerformMatrixInequality(matrix1, matrix2);
                     MessageBox.Show(resultMatrix.MatrixArray[0, 0] == 1.0 ? "Matrices are not equal" : "Matrices are equal", "Comparison Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
@@ -182,49 +180,19 @@ namespace WinFormsApp1
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-        private IMatrix PerformMatrixOperation(IMatrix matrix1, IMatrix matrix2, IMatrixOperation operation)
-        {
-            MatrixContext context = new MatrixContext();
-            context.SetStrategy(operation);
-            return context.ExecuteOperation(matrix1, matrix2);
-        }
-
-        private IMatrix PerformMatrixAddition(IMatrix matrix1, IMatrix matrix2)
-        {
-            return PerformMatrixOperation(matrix1, matrix2, new AddOperation());
-        }
-
-        private IMatrix PerformMatrixSubtraction(IMatrix matrix1, IMatrix matrix2)
-        {
-            return PerformMatrixOperation(matrix1, matrix2, new SubtractionOperation());
-        }
-
-        private IMatrix PerformMatrixMultiplication(IMatrix matrix1, IMatrix matrix2)
-        {
-            return PerformMatrixOperation(matrix1, matrix2, new MultiplicationOperation());
-        }
-
-        private IMatrix PerformMatrixEquality(IMatrix matrix1, IMatrix matrix2)
-        {
-            return PerformMatrixOperation(matrix1, matrix2, new EqualityOperation());
-        }
-
-        private IMatrix PerformMatrixInequality(IMatrix matrix1, IMatrix matrix2)
-        {
-            return PerformMatrixOperation(matrix1, matrix2, new InequalityOperation());
-        }
         private void buttonMatrixPow_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //int exponent = GetExponentValue(textBoxForExponent);
-            //if (matrixValues1 != null && exponent >= 0)
-            //{
-            //    resultMatrix = PerformMatrixExponentiation(matrixValues1, exponent);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            int exponent = GetExponentValue(textBoxForExponent);
+            if (matrixValues1 != null && exponent >= 0)
+            {
+                IMatrix matrix = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+                IMatrix resultMatrix = matrix.Power(exponent);
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private int GetExponentValue(TextBox exponentTextBox)
         {
@@ -236,23 +204,19 @@ namespace WinFormsApp1
             return -1;
         }
         
-        //private MatrixArithmeticOp PerformMatrixExponentiation(double[,] matrixValues, int exponent)
-        //{
-        //    MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-        //    return matrix ^ exponent;
-        //}
         private void buttonMultSklyar_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //double scalar = GetScalarValue(textBoxForSkalyar);
-            //if (matrixValues1 != null && scalar != double.MinValue)
-            //{
-            //    resultMatrix = PerformMatrixScalarMultiplication(matrixValues1, scalar);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            double scalar = GetScalarValue(textBoxForSkalyar);
+            if (matrixValues1 != null && scalar != double.MinValue)
+            {
+                IMatrix matrix = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+                IMatrix resultMatrix = matrix.MultiplyByScalar(scalar);
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private double GetScalarValue(TextBox scalarTextBox)
         {
@@ -267,180 +231,186 @@ namespace WinFormsApp1
         
         private void buttonSecondMatrixPow_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //int exponent = GetExponentValue(textBoxForSecondExponent);
-            //if (matrixValues2 != null && exponent >= 0)
-            //{
-            //    resultMatrix = PerformMatrixExponentiation(matrixValues2, exponent);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
+            int exponent = GetExponentValue(textBoxForExponent);
+            if (matrixValues2 != null && exponent >= 0)
+            {
+                IMatrix matrix = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+                IMatrix resultMatrix = matrix.Power(exponent);
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonSecondMultSklyar_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //double scalar = GetScalarValue(textBoxForSecondSkalyar);
-            //if (matrixValues2 != null && scalar != double.MinValue)
-            //{
-            //    resultMatrix = PerformMatrixScalarMultiplication(matrixValues2, scalar);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
+            double scalar = GetScalarValue(textBoxForSkalyar);
+            if (matrixValues2 != null && scalar != double.MinValue)
+            {
+                IMatrix matrix = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+                IMatrix resultMatrix = matrix.MultiplyByScalar(scalar);
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonExpMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //if (matrixValues1 != null)
-            //{
-            //    resultMatrix = PerformMatrixExponential(matrixValues1);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
-        }
-        private MatrixArithmeticOp PerformMatrixExponential(double[,] matrixValues)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix.Exp();
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues1 != null)
+            {
+                IMatrix matrix1 = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+
+                IMatrix resultMatrix = MatrixExtensions.Exp(matrix1);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonLogMatrix_Click(object sender, EventArgs e)
         {
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues1 != null)
+            {
+                IMatrix matrix1 = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
 
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //if (matrixValues1 != null)
-            //{
-            //    resultMatrix = PerformMatrixLogarithm(matrixValues1);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
-        }
-        private MatrixArithmeticOp PerformMatrixLogarithm(double[,] matrixValues)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix.Log();
+                IMatrix resultMatrix = MatrixExtensions.Log(matrix1);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonSinMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //if (matrixValues1 != null)
-            //{
-            //    resultMatrix = PerformMatrixSine(matrixValues1);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
-        }
-        private MatrixArithmeticOp PerformMatrixSine(double[,] matrixValues)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix.Sin();
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues1 != null)
+            {
+                IMatrix matrix1 = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+
+                IMatrix resultMatrix = MatrixExtensions.Sin(matrix1);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonCosMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //if (matrixValues1 != null)
-            //{
-            //    resultMatrix = PerformMatrixCosine(matrixValues1);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
-        }
-        private MatrixArithmeticOp PerformMatrixCosine(double[,] matrixValues)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix.Cos();
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues1 != null)
+            {
+                IMatrix matrix1 = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+
+                IMatrix resultMatrix = MatrixExtensions.Cos(matrix1);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonTangMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
-            //if (matrixValues1 != null)
-            //{
-            //    resultMatrix = PerformMatrixTangent(matrixValues1);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
-        }
-        private MatrixArithmeticOp PerformMatrixTangent(double[,] matrixValues)
-        {
-            MatrixArithmeticOp matrix = new MatrixArithmeticOp(matrixValues.GetLength(0), matrixValues.GetLength(1), matrixValues);
-            return matrix.Tan();
+            double[,] matrixValues1 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues1 != null)
+            {
+                IMatrix matrix1 = new Matrix(matrixValues1.GetLength(0), matrixValues1.GetLength(1), matrixValues1);
+
+                IMatrix resultMatrix = MatrixExtensions.Tan(matrix1);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
         private void buttonExpSecondMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //if (matrixValues2 != null)
-            //{
-            //    resultMatrix = PerformMatrixExponential(matrixValues2);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues2 != null)
+            {
+                IMatrix matrix2 = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+
+                IMatrix resultMatrix = MatrixExtensions.Exp(matrix2);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonLogSecondMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //if (matrixValues2 != null)
-            //{
-            //    resultMatrix = PerformMatrixLogarithm(matrixValues2);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues2 != null)
+            {
+                IMatrix matrix2 = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+
+                IMatrix resultMatrix = MatrixExtensions.Log(matrix2);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonSinSecondMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //if (matrixValues2 != null)
-            //{
-            //    resultMatrix = PerformMatrixSine(matrixValues2);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues2 != null)
+            {
+                IMatrix matrix2 = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+
+                IMatrix resultMatrix = MatrixExtensions.Sin(matrix2);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonCosSecondMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //if (matrixValues2 != null)
-            //{
-            //    resultMatrix = PerformMatrixCosine(matrixValues2);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues2 != null)
+            {
+                IMatrix matrix2 = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+
+                IMatrix resultMatrix = MatrixExtensions.Cos(matrix2);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonTangSecondMatrix_Click(object sender, EventArgs e)
         {
-            //double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers2);
-            //if (matrixValues2 != null)
-            //{
-            //    resultMatrix = PerformMatrixTangent(matrixValues2);
-            //    if (resultMatrix != null)
-            //    {
-            //        DisplayResultMatrix();
-            //    }
-            //}
+            double[,] matrixValues2 = MatrixProcessor.GetMatrixValues(numbers1);
+            if (matrixValues2 != null)
+            {
+                IMatrix matrix2 = new Matrix(matrixValues2.GetLength(0), matrixValues2.GetLength(1), matrixValues2);
+
+                IMatrix resultMatrix = MatrixExtensions.Tan(matrix2);
+
+                if (resultMatrix != null)
+                {
+                    DisplayResultMatrix(resultMatrix);
+                }
+            }
         }
 
         private void buttonClear1_Click(object sender, EventArgs e)

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace LibraryMatrix.interfaces
 {
-    internal interface IElementOperation
+    public interface IElementOperation
     {
+        double Execute(double value);
     }
 }
