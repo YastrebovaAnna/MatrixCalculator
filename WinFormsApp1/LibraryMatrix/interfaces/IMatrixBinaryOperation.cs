@@ -1,6 +1,6 @@
 ﻿namespace LibraryMatrix.interfaces
 {
-    public interface IMatrixOperation
+    public interface IMatrixBinaryOperation
     {
         IMatrix Execute(IMatrix matrixA, IMatrix matrixB);
     }

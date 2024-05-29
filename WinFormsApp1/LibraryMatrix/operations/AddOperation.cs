@@ -3,7 +3,7 @@ using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
-    public class AddOperation : IMatrixOperation
+    public class AddOperation : IMatrixBinaryOperation
     {
         public IMatrix Execute(IMatrix matrixA, IMatrix matrixB)
         {

@@ -6,7 +6,7 @@ namespace LibraryMatrix.core
 {
     public static class MatrixOperations
     {
-        private static IMatrixContext CreateContext(IMatrixOperation operation)
+        private static IMatrixContext CreateContext(IMatrixBinaryOperation operation)
         {
             IMatrixContext context = new MatrixContext();
             context.SetStrategy(operation);

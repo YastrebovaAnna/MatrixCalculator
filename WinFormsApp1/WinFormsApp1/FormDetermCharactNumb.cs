@@ -2,15 +2,15 @@
 using LibraryMatrix.core;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
+using LibraryMatrix.operations;
 using Label = System.Windows.Forms.Label;
 
 namespace CalcMatrix
 {
     public partial class FormDetermCharactNumb : Form
     {
-        public TextBoxMatrix numbers1;
+        public TextBoxMatrix textBoxMatrix;
 
-        private DetermAndCharact matrix;
 
         List<Label> resultLabels = new List<Label>();
 
@@ -29,104 +29,103 @@ namespace CalcMatrix
             int cols = (int)numericUpDownColMatrix.Value;
 
             IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
-            numbers1 = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
+            textBoxMatrix = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
 
-            foreach (var dataInput in numbers1.DataInputs)
+            foreach (var dataInput in textBoxMatrix.DataInputs)
             {
                 Controls.Add(((WinFormTextBox)dataInput).GetTextBox());
             }
         }
         private void buttonDetermSol_Click(object sender, EventArgs e)
         {
-            double[,] matrixValues1 = TextBoxMatrix.GetMatrixValues(numbers1);
-            if (matrixValues1 != null)
+            double[,] matrixValues = MatrixProcessor.GetMatrixValues(textBoxMatrix);
+            if (matrixValues != null)
             {
-                int rows1 = numbers1.Rows;
-                int cols1 = numbers1.Columns;
-                DetermAndCharact matrix = new DetermAndCharact(rows1, cols1, matrixValues1);
+                int rows = textBoxMatrix.Rows;
+                int cols = textBoxMatrix.Columns;
+                IMatrix matrix = new Matrix(rows, cols, matrixValues);
                 ClearResultLabels();
-
+                double determinant = 0.0;
                 if (checkBoxDeterm.Checked)
                 {
-                    if ((int)numericUpDownRowsMatrix.Value == 1 && (int)numericUpDownColMatrix.Value == 1 || (int)numericUpDownRowsMatrix.Value == 2 && (int)numericUpDownColMatrix.Value == 2)
+                    if (rows == 1 && cols == 1 || rows == 2 && cols == 2 || (rows == 3 && cols == 3))
                     {
-                        (double Determinant, string explanation) = matrix.CalculateDeterminant();
-                        AddResultLabel("Детермінант: " + Determinant.ToString(), explanation);
-                    }
-
-                    if ((int)numericUpDownRowsMatrix.Value == 3 && (int)numericUpDownColMatrix.Value == 3)
-                    {
-                        if (radioButtonTriangle.Checked)
+                        if (rows == 1 && cols == 1 || rows == 2 && cols == 2)
                         {
-                            (double Determinant, string explanation) = matrix.CalculateDeterminantTriangleMethod();
-                            AddResultLabel("Детермінант: " + Determinant.ToString(), explanation);
+                            determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                            AddResultLabel("Детермінант: " + determinant.ToString());
                         }
-                        else if (radioButtonSar.Checked)
+                        else if (rows == 3 && cols == 3)
                         {
-                            (double Determinant, string explanation) = matrix.CalculateDeterminantSarrus();
-                            AddResultLabel("Детермінант: " + Determinant.ToString(), explanation);
+                            if (radioButtonTriangle.Checked)
+                            {
+                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                                AddResultLabel("Детермінант: " + determinant.ToString());
+                            }
+                            else if (radioButtonSar.Checked)
+                            {
+                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
+                                AddResultLabel("Детермінант: " + determinant.ToString());
+                            }
+                            else if (radioButtonRoz.Checked)
+                            {
+                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                                AddResultLabel($"Детермінант: " + determinant.ToString());
+                            }
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Для виконання цієї дії матриця має бути розміром 3*3", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }
-                    if (radioButtonRoz.Checked)
-                    {
-                        double Determinant = matrix.CalculateDeterminantGauss();
-                        AddResultLabel($"Детермінант: " + Determinant.ToString());
+                        determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                        AddResultLabel($"Детермінант: " + determinant.ToString());
                     }
                 }
-
                 if (checkBoxRank.Checked)
                 {
-                    (int rank, string explanation) = matrix.CalculateRank();
-                    AddResultLabel("Ранг: " + rank.ToString(), explanation);
+                    int rank = MatrixOperationOtherContext.CalculateRank(matrix);
+                    AddResultLabel("Ранг: " + rank.ToString());
                 }
 
                 if (checkBoxShall.Checked)
                 {
-                    (double Trace, string explanation) = matrix.CalculateTrace();
-                    AddResultLabel($"Слід матриці: " + Trace.ToString(), explanation);
+                    double trace = MatrixOperationOtherContext.CalculateTrace(matrix);
+                    AddResultLabel($"Слід матриці: {trace}");
                 }
 
                 if (checkBoxMinelem.Checked)
                 {
-                    matrix.FindMinimumElement();
-                    double minimumElement = matrix.MinimumElement;
+                    double minimumElement = MatrixOperationOtherContext.FindMinimumElement(matrix);
                     AddResultLabel($"Мінімальний елемент: {minimumElement}");
                 }
 
                 if (checkBoxMaxElem.Checked)
                 {
-                    matrix.FindMaximumElement();
-                    double maximumElement = matrix.MaximumElement;
+                    double maximumElement = MatrixOperationOtherContext.FindMaximumElement(matrix);
                     AddResultLabel($"Максимальний елемент: {maximumElement}");
                 }
+
                 if (checkBoxNorm.Checked)
                 {
-                    matrix.MatrixNormal();
-                    double normal = matrix.MatrixNorm;
+                    double normal = MatrixOperationOtherContext.CalculateMatrixNorm(matrix);
                     AddResultLabel($"Норма матриці: {normal}");
                 }
+
                 if (checkBoxAverage.Checked)
                 {
-                    matrix.Average();
-                    double average = matrix.AverageElem;
-                    AddResultLabel($"Середня значення: {average}");
+                    double average = MatrixOperationOtherContext.CalculateAverage(matrix);
+                    AddResultLabel($"Середнє значення: {average}");
                 }
+
                 if (checkBoxSum.Checked)
                 {
-                    matrix.SummElem();
-                    double sum = matrix.SummElemMatrix;
-                    AddResultLabel($"Сумма елементів: {sum}");
+                    double sum = MatrixOperationOtherContext.CalculateSum(matrix);
+                    AddResultLabel($"Сума елементів: {sum}");
                 }
+
                 if (checkBoxProd.Checked)
                 {
-                    matrix.MultElem();
-                    double mult = matrix.MultElemMatrix;
-                    AddResultLabel($"Добуток елементів: {mult}");
+                    double product = MatrixOperationOtherContext.CalculateProduct(matrix);
+                    AddResultLabel($"Добуток елементів: {product}");
                 }
             }
             else
@@ -177,9 +176,9 @@ namespace CalcMatrix
 
         private void buttonClear1_Click(object sender, EventArgs e)
         {
-            if (numbers1 != null)
+            if (textBoxMatrix != null)
             {
-                foreach (var dataInput in numbers1.DataInputs)
+                foreach (var dataInput in textBoxMatrix.DataInputs)
                 {
                     var textBox = ((WinFormTextBox)dataInput).GetTextBox();
                     if (textBox.Parent == this)
