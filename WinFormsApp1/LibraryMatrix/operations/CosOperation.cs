@@ -1,17 +1,25 @@
-﻿using LibraryMatrix.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
-    public class CosOperation : IElementOperation
+    public class CosOperation : IMatrixOperation<IMatrix>
     {
-        public double Execute(double value)
+        public IMatrix Execute(IMatrix matrix)
         {
-            return Math.Cos(value);
+            int rows = matrix.Rows;
+            int cols = matrix.Columns;
+            double[,] result = new double[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    result[i, j] = Math.Cos(matrix.MatrixArray[i, j]);
+                }
+            }
+
+            return new Matrix(rows, cols, result);
         }
     }
 }

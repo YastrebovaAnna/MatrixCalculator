@@ -1,24 +1,20 @@
 ﻿using LibraryMatrix.calculator;
 using LibraryMatrix.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibraryMatrix.core
 {
     public class MatrixOperationDetermContext
     {
-        private static IMatrixContext CreateContext(IMatrixDeterminantOperation operation)
+        private static IMatrixContext CreateContext<T>(IMatrixOperation<T> operation)
         {
             IMatrixContext context = new MatrixContext();
             context.SetStrategy(operation);
             return context;
         }
-        public static double CalculateDeterminant(IMatrix matrix, IMatrixDeterminantOperation operation)
+
+        public static double CalculateDeterminant(IMatrix matrix, IMatrixOperation<double> operation)
         {
-            return CreateContext(operation).ExecuteDeterminantOperation(matrix);
+            return CreateContext(operation).ExecuteOperation<double>(matrix);
         }
     }
 }

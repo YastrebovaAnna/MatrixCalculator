@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryMatrix.operations
 {
-    public class FindMaximumElement : IMatrixElementFinder
+    public class FindMaximumElement : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

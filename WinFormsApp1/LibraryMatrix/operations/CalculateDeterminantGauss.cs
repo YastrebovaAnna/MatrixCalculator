@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateDeterminantGauss : IMatrixDeterminantOperation
+    public class CalculateDeterminantGauss : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

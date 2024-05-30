@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateAverage : IMatrixElementFinder
+    public class CalculateAverage : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

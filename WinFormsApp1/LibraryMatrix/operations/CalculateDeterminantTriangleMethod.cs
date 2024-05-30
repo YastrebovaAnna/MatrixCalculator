@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateDeterminantTriangleMethod : IMatrixDeterminantOperation
+    public class CalculateDeterminantTriangleMethod : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

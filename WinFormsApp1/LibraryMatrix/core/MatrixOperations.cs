@@ -15,27 +15,27 @@ namespace LibraryMatrix.core
 
         public static IMatrix PerformMatrixAddition(IMatrix matrix1, IMatrix matrix2)
         {
-            return CreateContext(new AddOperation()).ExecuteOperation(matrix1, matrix2);
+            return CreateContext(new AddOperation()).ExecuteBinaryOperation(matrix1, matrix2);
         }
 
         public static IMatrix PerformMatrixSubtraction(IMatrix matrix1, IMatrix matrix2)
         {
-            return CreateContext(new SubtractionOperation()).ExecuteOperation(matrix1, matrix2);
+            return CreateContext(new SubtractionOperation()).ExecuteBinaryOperation(matrix1, matrix2);
         }
 
         public static IMatrix PerformMatrixMultiplication(IMatrix matrix1, IMatrix matrix2)
         {
-            return CreateContext(new MultiplicationOperation()).ExecuteOperation(matrix1, matrix2);
+            return CreateContext(new MultiplicationOperation()).ExecuteBinaryOperation(matrix1, matrix2);
         }
 
         public static IMatrix PerformMatrixEquality(IMatrix matrix1, IMatrix matrix2)
         {
-            return CreateContext(new EqualityOperation()).ExecuteOperation(matrix1, matrix2);
+            return CreateContext(new EqualityOperation()).ExecuteBinaryOperation(matrix1, matrix2);
         }
 
         public static IMatrix PerformMatrixInequality(IMatrix matrix1, IMatrix matrix2)
         {
-            return CreateContext(new InequalityOperation()).ExecuteOperation(matrix1, matrix2);
+            return CreateContext(new InequalityOperation()).ExecuteBinaryOperation(matrix1, matrix2);
         }
     }
 }

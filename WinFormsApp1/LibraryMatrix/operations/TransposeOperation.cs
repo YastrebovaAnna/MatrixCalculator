@@ -3,7 +3,7 @@ using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
-    public class TransposeOperation : ITransposeOperation
+    public class TransposeOperation : IMatrixOperation<IMatrix>
     {
         public IMatrix Execute(IMatrix matrix)
         {

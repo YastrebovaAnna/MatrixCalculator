@@ -11,28 +11,7 @@ namespace LibraryMatrix.core
 {
     public static class TransposableMatrixOperations
     {
-        private static IMatrixContext CreateContext(ITransposeOperation operation)
-        {
-            IMatrixContext context = new MatrixContext();
-            context.SetStrategy(operation);
-            return context;
-        }
-
-        private static IMatrixContext CreateContext(IInvertOperation operation)
-        {
-            IMatrixContext context = new MatrixContext();
-            context.SetStrategy(operation);
-            return context;
-        }
-
-        private static IMatrixContext CreateContext(IRotateClockwiseOperation operation)
-        {
-            IMatrixContext context = new MatrixContext();
-            context.SetStrategy(operation);
-            return context;
-        }
-
-        private static IMatrixContext CreateContext(IRotateCounterClockwiseOperation operation)
+        private static IMatrixContext CreateContext<T>(IMatrixOperation<T> operation)
         {
             IMatrixContext context = new MatrixContext();
             context.SetStrategy(operation);
@@ -41,22 +20,22 @@ namespace LibraryMatrix.core
 
         public static IMatrix Transpose(IMatrix matrix)
         {
-            return CreateContext(new TransposeOperation()).ExecuteTransposeOperation(matrix);
+            return CreateContext(new TransposeOperation()).ExecuteOperation<IMatrix>(matrix);
         }
 
         public static IMatrix Invert(IMatrix matrix)
         {
-            return CreateContext(new InvertOperation()).ExecuteInvertOperation(matrix);
+            return CreateContext(new InvertOperation()).ExecuteOperation<IMatrix>(matrix);
         }
 
         public static IMatrix RotateClockwise(IMatrix matrix)
         {
-            return CreateContext(new RotateClockwiseOperation()).ExecuteRotateClockwiseOperation(matrix);
+            return CreateContext(new RotateClockwiseOperation()).ExecuteOperation<IMatrix>(matrix);
         }
 
         public static IMatrix RotateCounterClockwise(IMatrix matrix)
         {
-            return CreateContext(new RotateCounterClockwiseOperation()).ExecuteRotateCounterClockwiseOperation(matrix);
+            return CreateContext(new RotateCounterClockwiseOperation()).ExecuteOperation<IMatrix>(matrix);
         }
     }
 }

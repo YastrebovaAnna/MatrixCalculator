@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateRank : IMatrixRankOperation
+    public class CalculateRank : IMatrixOperation<int>
     {
         public int Execute(IMatrix matrix)
         {

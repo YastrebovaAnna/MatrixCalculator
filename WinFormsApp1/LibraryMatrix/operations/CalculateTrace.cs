@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateTrace : IMatrixTraceOperation
+    public class CalculateTrace : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

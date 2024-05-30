@@ -14,7 +14,6 @@ namespace CalcMatrix
     {
         private TextBoxMatrix numbers1;
         private IMatrix matrixs;
-        private string explanation = "";
 
         private List<Label> resultLabels = new List<Label>();
         public TextBoxMatrix resultTextBoxMatrix;

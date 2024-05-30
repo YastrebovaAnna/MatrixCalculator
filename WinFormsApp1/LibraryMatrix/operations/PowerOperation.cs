@@ -1,8 +1,9 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
-    public class PowerOperation : IElementOperation
+    public class PowerOperation : IMatrixOperation<IMatrix>
     {
         private readonly double _power;
 
@@ -11,9 +12,18 @@ namespace LibraryMatrix.operations
             _power = power;
         }
 
-        public double Execute(double value)
+        public IMatrix Execute(IMatrix matrix)
         {
-            return Math.Pow(value, _power);
+            int rows = matrix.Rows;
+            int cols = matrix.Columns;
+            double[,] result = new double[rows, cols];
+
+            MatrixProcessor.IterateOverMatrix(rows, cols, (i, j) =>
+            {
+                result[i, j] = Math.Pow(matrix.MatrixArray[i, j], _power);
+            });
+
+            return new Matrix(rows, cols, result);
         }
     }
 }

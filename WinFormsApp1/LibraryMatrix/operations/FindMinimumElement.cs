@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class FindMinimumElement : IMatrixElementFinder
+    public class FindMinimumElement : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

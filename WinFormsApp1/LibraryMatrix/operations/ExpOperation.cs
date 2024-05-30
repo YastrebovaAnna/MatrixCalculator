@@ -1,17 +1,22 @@
-﻿using LibraryMatrix.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
-    public class ExpOperation : IElementOperation
+    public class ExpOperation : IMatrixOperation<IMatrix>
     {
-        public double Execute(double value)
+        public IMatrix Execute(IMatrix matrix)
         {
-            return Math.Exp(value);
+            int rows = matrix.Rows;
+            int cols = matrix.Columns;
+            double[,] result = new double[rows, cols];
+
+            MatrixProcessor.IterateOverMatrix(rows, cols, (i, j) =>
+            {
+                result[i, j] = Math.Exp(matrix.MatrixArray[i, j]);
+            });
+
+            return new Matrix(rows, cols, result);
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LibraryMatrix.operations
 {
-    public class RotateCounterClockwiseOperation : IRotateCounterClockwiseOperation
+    public class RotateCounterClockwiseOperation : IMatrixOperation<IMatrix>
     {
         public IMatrix Execute(IMatrix matrix)
         {

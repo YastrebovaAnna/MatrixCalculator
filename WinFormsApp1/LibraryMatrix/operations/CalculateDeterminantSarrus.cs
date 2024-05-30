@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateDeterminantSarrus : IMatrixDeterminantOperation
+    public class CalculateDeterminantSarrus : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

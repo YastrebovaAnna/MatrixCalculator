@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class MatrixNormal : IMatrixNormOperation
+    public class MatrixNormal : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

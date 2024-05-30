@@ -2,7 +2,7 @@
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateProduct : IMatrixElementFinder
+    public class CalculateProduct : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LibraryMatrix.operations
 {
-    public class CalculateSum : IMatrixElementFinder
+    public class CalculateSum : IMatrixOperation<double>
     {
         public double Execute(IMatrix matrix)
         {

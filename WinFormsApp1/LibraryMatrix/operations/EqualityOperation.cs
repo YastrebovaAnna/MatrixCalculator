@@ -25,5 +25,10 @@ namespace LibraryMatrix.operations
 
             return new Matrix(1, 1, new double[,] { { equal ? 1.0 : 0.0 } });
         }
+
+        public IMatrix Execute(IMatrix matrix)
+        {
+            throw new NotImplementedException("EqualityOperation requires two matrices.");
+        }
     }
 }

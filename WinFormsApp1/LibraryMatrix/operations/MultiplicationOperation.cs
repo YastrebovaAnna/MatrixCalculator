@@ -22,5 +22,9 @@ namespace LibraryMatrix.operations
             });
             return new Matrix(matrixA.Rows, matrixB.Columns, result);
         }
+        public IMatrix Execute(IMatrix matrix)
+        {
+            throw new NotImplementedException("EqualityOperation requires two matrices.");
+        }
     }
 }
