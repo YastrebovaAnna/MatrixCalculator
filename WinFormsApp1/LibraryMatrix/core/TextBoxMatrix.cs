@@ -18,11 +18,15 @@ namespace LibraryMatrix.core
 
         private void InitializeDataInputs(int startX, int startY, IDataInputFactory dataInputFactory, int width, Size locationOffset, Color backColor)
         {
-            MatrixProcessor.IterateOverMatrix(Rows, Columns, (row, col) =>
+            var textBoxMatrixWrapper = new TextBoxMatrixWrapper(this);
+            var iterator = new MatrixIterator(textBoxMatrixWrapper);
+
+            iterator.Iterate((row, col, value) =>
             {
                 DataInputs[row, col] = CreateAndInitializeDataInput(dataInputFactory, startX, startY, row, col, width, locationOffset, backColor);
             });
         }
+
 
         private IDataInput CreateAndInitializeDataInput(IDataInputFactory dataInputFactory, int startX, int startY, int row, int col, int width, Size locationOffset, Color backColor)
         {

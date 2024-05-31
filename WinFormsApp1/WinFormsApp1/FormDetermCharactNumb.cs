@@ -11,7 +11,6 @@ namespace CalcMatrix
     public partial class FormDetermCharactNumb : Form
     {
         public TextBoxMatrix textBoxMatrix;
-
         List<Label> resultLabels = new List<Label>();
         public FormDetermCharactNumb()
         {
@@ -145,8 +144,8 @@ namespace CalcMatrix
                 {
                     AutoSize = true,
                     TextAlign = ContentAlignment.TopLeft,
-                    Location = new Point(labelX, resultLabels.Count * 40 + 450),
-                    Width = labelWidth,
+                    Location = new Point(80, resultLabels.Count * 40 + 450),
+                    Width = 350,
                     Font = new Font("Times New Roman", 12),
                     Text = explanation
                 };
