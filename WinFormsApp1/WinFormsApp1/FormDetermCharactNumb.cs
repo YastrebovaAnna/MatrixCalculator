@@ -1,5 +1,6 @@
 ﻿using LibraryMatrix;
 using LibraryMatrix.core;
+using LibraryMatrix.facade;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
 using LibraryMatrix.operations;
@@ -11,13 +12,7 @@ namespace CalcMatrix
     {
         public TextBoxMatrix textBoxMatrix;
 
-
         List<Label> resultLabels = new List<Label>();
-
-        int explanationMargin = 20;
-        int labelX = 80;
-        int labelWidth = 350;
-        int currentY = 400;
         public FormDetermCharactNumb()
         {
             InitializeComponent();
@@ -52,87 +47,86 @@ namespace CalcMatrix
                     {
                         if (rows == 1 && cols == 1 || rows == 2 && cols == 2)
                         {
-                            determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
                             AddResultLabel("Детермінант: " + determinant.ToString());
                         }
                         else if (rows == 3 && cols == 3)
                         {
                             if (radioButtonTriangle.Checked)
                             {
-                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
                                 AddResultLabel("Детермінант: " + determinant.ToString());
                             }
                             else if (radioButtonSar.Checked)
                             {
-                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
+                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
                                 AddResultLabel("Детермінант: " + determinant.ToString());
                             }
                             else if (radioButtonRoz.Checked)
                             {
-                                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
                                 AddResultLabel($"Детермінант: " + determinant.ToString());
                             }
                         }
                     }
                     else
                     {
-                        determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                        determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
                         AddResultLabel($"Детермінант: " + determinant.ToString());
                     }
                 }
                 if (checkBoxRank.Checked)
                 {
-                    int rank = MatrixOperationOtherContext.CalculateRank(matrix);
+                    int rank = MatrixFacade.CalculateRank(matrix);
                     AddResultLabel("Ранг: " + rank.ToString());
                 }
 
                 if (checkBoxShall.Checked)
                 {
-                    double trace = MatrixOperationOtherContext.CalculateTrace(matrix);
+                    double trace = MatrixFacade.CalculateTrace(matrix);
                     AddResultLabel($"Слід матриці: {trace}");
                 }
 
                 if (checkBoxMinelem.Checked)
                 {
-                    double minimumElement = MatrixOperationOtherContext.FindMinimumElement(matrix);
+                    double minimumElement = MatrixFacade.FindMinimumElement(matrix);
                     AddResultLabel($"Мінімальний елемент: {minimumElement}");
                 }
 
                 if (checkBoxMaxElem.Checked)
                 {
-                    double maximumElement = MatrixOperationOtherContext.FindMaximumElement(matrix);
+                    double maximumElement = MatrixFacade.FindMaximumElement(matrix);
                     AddResultLabel($"Максимальний елемент: {maximumElement}");
                 }
 
                 if (checkBoxNorm.Checked)
                 {
-                    double normal = MatrixOperationOtherContext.CalculateMatrixNorm(matrix);
+                    double normal = MatrixFacade.CalculateMatrixNorm(matrix);
                     AddResultLabel($"Норма матриці: {normal}");
                 }
 
                 if (checkBoxAverage.Checked)
                 {
-                    double average = MatrixOperationOtherContext.CalculateAverage(matrix);
+                    double average = MatrixFacade.CalculateAverage(matrix);
                     AddResultLabel($"Середнє значення: {average}");
                 }
 
                 if (checkBoxSum.Checked)
                 {
-                    double sum = MatrixOperationOtherContext.CalculateSum(matrix);
+                    double sum = MatrixFacade.CalculateSum(matrix);
                     AddResultLabel($"Сума елементів: {sum}");
                 }
 
                 if (checkBoxProd.Checked)
                 {
-                    double product = MatrixOperationOtherContext.CalculateProduct(matrix);
+                    double product = MatrixFacade.CalculateProduct(matrix);
                     AddResultLabel($"Добуток елементів: {product}");
                 }
             }
             else
-            {
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
         }
+
         public void AddResultLabel(string text, string explanation = "")
         {
             Label labelResult = new Label

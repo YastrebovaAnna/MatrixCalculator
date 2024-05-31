@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LibraryMatrix;
 using LibraryMatrix.core;
+using LibraryMatrix.facade;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
 using LibraryMatrix.operations;
@@ -76,7 +77,7 @@ namespace CalcMatrix
 
             if (checkBoxTransp.Checked)
             {
-                matrixs = TransposableMatrixOperations.Transpose(matrix);
+                matrixs = MatrixFacade.Transpose(matrix);
             }
             else if (checkBoxInvers.Checked)
             {
@@ -101,11 +102,11 @@ namespace CalcMatrix
             double determinant;
             if (matrix.Rows == 2 && matrix.Columns == 2)
             {
-                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
             }
             else
             {
-                determinant = MatrixOperationDetermContext.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
             }
 
             AddResultLabel("Детермінант: " + determinant.ToString());
@@ -116,16 +117,16 @@ namespace CalcMatrix
                 return;
             }
 
-            matrixs = TransposableMatrixOperations.Invert(matrix);
+            matrixs = MatrixFacade.Invert(matrix);
         }
 
       
         private void HandleMatrixRotation(IMatrix matrix)
         {
             if (checkBoxSpinsFor.Checked)
-                matrixs = TransposableMatrixOperations.RotateClockwise(matrix);
+                matrixs = MatrixFacade.RotateClockwise(matrix);
             else
-                matrixs = TransposableMatrixOperations.RotateCounterClockwise(matrix);
+                matrixs = MatrixFacade.RotateCounterClockwise(matrix);
         }
 
         private void DisplayResultMatrix(IMatrix resultMatrix)

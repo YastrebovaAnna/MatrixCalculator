@@ -1,5 +1,4 @@
 ﻿
-
 namespace LibraryMatrix.interfaces
 {
     public interface IMatrixOperation<T>
