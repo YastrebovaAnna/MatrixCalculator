@@ -1,5 +1,4 @@
-﻿using LibraryMatrix.core;
-using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.calculator
 {

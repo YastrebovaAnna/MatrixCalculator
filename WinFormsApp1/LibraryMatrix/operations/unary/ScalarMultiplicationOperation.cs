@@ -1,9 +1,9 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class ScalarMultiplicationOperation : IMatrixOperation<IMatrix>
+    public class ScalarMultiplicationOperation : MatrixUnaryOperationBase
     {
         private readonly double _scalar;
 
@@ -12,17 +12,9 @@ namespace LibraryMatrix.operations
             _scalar = scalar;
         }
 
-        public IMatrix Execute(IMatrix matrix)
+        protected override double PerformOperation(double value)
         {
-            double[,] result = new double[matrix.Rows, matrix.Columns];
-            var iterator = new MatrixIterator(matrix);
-
-            iterator.Iterate((i, j, value) =>
-            {
-                result[i, j] = value * _scalar;
-            });
-
-            return new Matrix(matrix.Rows, matrix.Columns, result);
+            return value * _scalar;
         }
     }
 }

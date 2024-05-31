@@ -369,7 +369,6 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormForTransposing";
             Text = "FormForTransposing";
-            Load += FormForTransposing_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRowsMatrix).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownColMatrix).EndInit();

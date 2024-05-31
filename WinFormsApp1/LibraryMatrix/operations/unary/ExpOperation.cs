@@ -1,23 +1,13 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class ExpOperation : IMatrixOperation<IMatrix>
+    public class ExpOperation : MatrixUnaryOperationBase
     {
-        public IMatrix Execute(IMatrix matrix)
+        protected override double PerformOperation(double value)
         {
-            int rows = matrix.Rows;
-            int cols = matrix.Columns;
-            double[,] result = new double[rows, cols];
-            var iterator = new MatrixIterator(matrix);
-
-            iterator.Iterate((i, j, value) =>
-            {
-                result[i, j] = Math.Exp(value);
-            });
-
-            return new Matrix(rows, cols, result);
+            return Math.Exp(value);
         }
     }
 }

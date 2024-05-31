@@ -4,7 +4,6 @@ namespace LibraryMatrix.core
 {
     public class TextBoxMatrix
     {
-
         public IDataInput[,] DataInputs { get; private set; }
 
         public int Rows => DataInputs.GetLength(0);
@@ -18,15 +17,12 @@ namespace LibraryMatrix.core
 
         private void InitializeDataInputs(int startX, int startY, IDataInputFactory dataInputFactory, int width, Size locationOffset, Color backColor)
         {
-            var textBoxMatrixWrapper = new TextBoxMatrixWrapper(this);
-            var iterator = new MatrixIterator(textBoxMatrixWrapper);
-
+            var iterator = new MatrixIterator(new TextBoxMatrixWrapper(this));
             iterator.Iterate((row, col, value) =>
             {
                 DataInputs[row, col] = CreateAndInitializeDataInput(dataInputFactory, startX, startY, row, col, width, locationOffset, backColor);
             });
         }
-
 
         private IDataInput CreateAndInitializeDataInput(IDataInputFactory dataInputFactory, int startX, int startY, int row, int col, int width, Size locationOffset, Color backColor)
         {

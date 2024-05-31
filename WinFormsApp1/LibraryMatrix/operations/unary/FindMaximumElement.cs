@@ -1,24 +1,14 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class FindMaximumElement : IMatrixOperation<double>
+    public class FindMaximumElement : MatrixAggregateOperationBase
     {
-        public double Execute(IMatrix matrix)
-        {
-            double max = double.MinValue;
-            var iterator = new MatrixIterator(matrix);
+        protected override double Initialize() => double.MinValue;
 
-            iterator.Iterate((i, j, value) =>
-            {
-                if (value > max)
-                {
-                    max = value;
-                }
-            });
+        protected override double Aggregate(double accumulator, double value) => Math.Max(accumulator, value);
 
-            return max;
-        }
+        protected override double Finalize(double accumulator, int elementCount) => accumulator;
     }
 }

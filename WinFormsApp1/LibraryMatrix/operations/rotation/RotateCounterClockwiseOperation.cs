@@ -1,7 +1,7 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.rotation
 {
     public class RotateCounterClockwiseOperation : IMatrixOperation<IMatrix>
     {

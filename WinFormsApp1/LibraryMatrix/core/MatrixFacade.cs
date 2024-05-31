@@ -1,6 +1,9 @@
 ﻿using LibraryMatrix.calculator;
 using LibraryMatrix.interfaces;
-using LibraryMatrix.operations;
+using LibraryMatrix.operations.binary;
+using LibraryMatrix.operations.inversion;
+using LibraryMatrix.operations.rotation;
+using LibraryMatrix.operations.unary;
 
 namespace LibraryMatrix.facade
 {

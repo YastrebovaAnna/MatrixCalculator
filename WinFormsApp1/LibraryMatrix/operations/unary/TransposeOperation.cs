@@ -1,7 +1,7 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
     public class TransposeOperation : IMatrixOperation<IMatrix>
     {

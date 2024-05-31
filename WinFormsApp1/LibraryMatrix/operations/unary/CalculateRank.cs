@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
     public class CalculateRank : IMatrixOperation<int>
     {

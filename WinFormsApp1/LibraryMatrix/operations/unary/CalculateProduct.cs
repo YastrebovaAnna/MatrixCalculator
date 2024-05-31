@@ -1,21 +1,15 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class CalculateProduct : IMatrixOperation<double>
+    public class CalculateProduct : MatrixAggregateOperationBase
     {
-        public double Execute(IMatrix matrix)
-        {
-            double product = 1.0;
-            var iterator = new MatrixIterator(matrix);
+        protected override double Initialize() => 1.0;
 
-            iterator.Iterate((i, j, value) =>
-            {
-                product *= value;
-            });
+        protected override double Aggregate(double accumulator, double value) => accumulator *= value;
 
-            return product;
-        }
+        protected override double Finalize(double accumulator, int elementCount) => accumulator;
     }
+
 }

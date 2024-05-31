@@ -1,9 +1,9 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class PowerOperation : IMatrixOperation<IMatrix>
+    public class PowerOperation : MatrixUnaryOperationBase
     {
         private readonly double _power;
 
@@ -12,19 +12,9 @@ namespace LibraryMatrix.operations
             _power = power;
         }
 
-        public IMatrix Execute(IMatrix matrix)
+        protected override double PerformOperation(double value)
         {
-            int rows = matrix.Rows;
-            int cols = matrix.Columns;
-            double[,] result = new double[rows, cols];
-            var iterator = new MatrixIterator(matrix);
-
-            iterator.Iterate((i, j, value) =>
-            {
-                result[i, j] = Math.Pow(value, _power);
-            });
-
-            return new Matrix(rows, cols, result);
+            return Math.Pow(value, _power);
         }
     }
 }

@@ -358,7 +358,6 @@
             FormBorderStyle=FormBorderStyle.None;
             Name="FormDetermCharactNumb";
             Text="FormDetermCharactNumb";
-            Load+=FormDetermCharactNumb_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRowsMatrix).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownColMatrix).EndInit();

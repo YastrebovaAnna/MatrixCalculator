@@ -1,6 +1,6 @@
 ﻿using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.determinant
 {
     public class CalculateDeterminantSarrus : IMatrixOperation<double>
     {

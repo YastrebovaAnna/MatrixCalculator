@@ -1,21 +1,14 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.unary
 {
-    public class MatrixNormal : IMatrixOperation<double>
+    public class MatrixNormal : MatrixAggregateOperationBase
     {
-        public double Execute(IMatrix matrix)
-        {
-            double norm = 0.0;
-            var iterator = new MatrixIterator(matrix);
+        protected override double Initialize() => 0.0;
 
-            iterator.Iterate((i, j, value) =>
-            {
-                norm += value * value;
-            });
+        protected override double Aggregate(double accumulator, double value) => accumulator += value * value;
 
-            return Math.Sqrt(norm);
-        }
+        protected override double Finalize(double accumulator, int elementCount) => Math.Sqrt(accumulator);
     }
 }

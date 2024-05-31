@@ -4,6 +4,7 @@ using LibraryMatrix.facade;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
 using LibraryMatrix.operations;
+using LibraryMatrix.operations.determinant;
 using Label = System.Windows.Forms.Label;
 
 namespace CalcMatrix
@@ -11,10 +12,11 @@ namespace CalcMatrix
     public partial class FormDetermCharactNumb : Form
     {
         public TextBoxMatrix textBoxMatrix;
-        List<Label> resultLabels = new List<Label>();
+        private readonly ILabelService labelService;
         public FormDetermCharactNumb()
         {
             InitializeComponent();
+            labelService = new WinFormsLabelService();
         }
 
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
@@ -38,7 +40,7 @@ namespace CalcMatrix
                 int rows = textBoxMatrix.Rows;
                 int cols = textBoxMatrix.Columns;
                 IMatrix matrix = new Matrix(rows, cols, matrixValues);
-                ClearResultLabels();
+                labelService.ClearResultLabels(this);
                 double determinant = 0.0;
                 if (checkBoxDeterm.Checked)
                 {
@@ -47,124 +49,83 @@ namespace CalcMatrix
                         if (rows == 1 && cols == 1 || rows == 2 && cols == 2)
                         {
                             determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-                            AddResultLabel("Детермінант: " + determinant.ToString());
+                            labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
                         }
                         else if (rows == 3 && cols == 3)
                         {
                             if (radioButtonTriangle.Checked)
                             {
                                 determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-                                AddResultLabel("Детермінант: " + determinant.ToString());
+                                labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
                             }
                             else if (radioButtonSar.Checked)
                             {
                                 determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
-                                AddResultLabel("Детермінант: " + determinant.ToString());
+                                labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
                             }
                             else if (radioButtonRoz.Checked)
                             {
                                 determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-                                AddResultLabel($"Детермінант: " + determinant.ToString());
+                                labelService.AddResultLabel(this, $"Детермінант: " + determinant.ToString(), 800, 300);
                             }
                         }
                     }
                     else
                     {
                         determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-                        AddResultLabel($"Детермінант: " + determinant.ToString());
+                        labelService.AddResultLabel(this, $"Детермінант: " + determinant.ToString(), 800, 300);
                     }
                 }
                 if (checkBoxRank.Checked)
                 {
                     int rank = MatrixFacade.CalculateRank(matrix);
-                    AddResultLabel("Ранг: " + rank.ToString());
+                    labelService.AddResultLabel(this, "Ранг: " + rank.ToString(), 800, 300);
                 }
 
                 if (checkBoxShall.Checked)
                 {
                     double trace = MatrixFacade.CalculateTrace(matrix);
-                    AddResultLabel($"Слід матриці: {trace}");
+                    labelService.AddResultLabel(this, $"Слід матриці: {trace}", 800, 300);
                 }
 
                 if (checkBoxMinelem.Checked)
                 {
                     double minimumElement = MatrixFacade.FindMinimumElement(matrix);
-                    AddResultLabel($"Мінімальний елемент: {minimumElement}");
+                    labelService.AddResultLabel(this, $"Мінімальний елемент: {minimumElement}", 800, 300);
                 }
 
                 if (checkBoxMaxElem.Checked)
                 {
                     double maximumElement = MatrixFacade.FindMaximumElement(matrix);
-                    AddResultLabel($"Максимальний елемент: {maximumElement}");
+                    labelService.AddResultLabel(this, $"Максимальний елемент: {maximumElement}", 800, 300);
                 }
 
                 if (checkBoxNorm.Checked)
                 {
                     double normal = MatrixFacade.CalculateMatrixNorm(matrix);
-                    AddResultLabel($"Норма матриці: {normal}");
+                    labelService.AddResultLabel(this, $"Норма матриці: {normal}", 800, 300);
                 }
 
                 if (checkBoxAverage.Checked)
                 {
                     double average = MatrixFacade.CalculateAverage(matrix);
-                    AddResultLabel($"Середнє значення: {average}");
+                    labelService.AddResultLabel(this, $"Середнє значення: {average}", 800, 300);
                 }
 
                 if (checkBoxSum.Checked)
                 {
                     double sum = MatrixFacade.CalculateSum(matrix);
-                    AddResultLabel($"Сума елементів: {sum}");
+                    labelService.AddResultLabel(this, $"Сума елементів: {sum}", 800, 300);
                 }
 
                 if (checkBoxProd.Checked)
                 {
                     double product = MatrixFacade.CalculateProduct(matrix);
-                    AddResultLabel($"Добуток елементів: {product}");
+                    labelService.AddResultLabel(this, $"Добуток елементів: {product}", 800, 300);
                 }
             }
             else
                 MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        public void AddResultLabel(string text, string explanation = "")
-        {
-            Label labelResult = new Label
-            {
-                Font = new Font("Times New Roman", 12),
-                AutoSize = true,
-                Text = text,
-                Location = new Point(800, resultLabels.Count * 20 + 300)
-            };
-            resultLabels.Add(labelResult);
-            this.Controls.Add(labelResult);
-
-            if (!string.IsNullOrEmpty(explanation))
-            {
-                Label labelExplanation = new Label
-                {
-                    AutoSize = true,
-                    TextAlign = ContentAlignment.TopLeft,
-                    Location = new Point(80, resultLabels.Count * 40 + 450),
-                    Width = 350,
-                    Font = new Font("Times New Roman", 12),
-                    Text = explanation
-                };
-                resultLabels.Add(labelExplanation);
-                this.Controls.Add(labelExplanation);
-            }
-        }
-        private void ClearResultLabels()
-        {
-            foreach (Label label in resultLabels)
-            {
-                this.Controls.Remove(label);
-                label.Dispose();
-            }
-            resultLabels = new List<Label>();
-        }
-        private void FormDetermCharactNumb_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void buttonClear1_Click(object sender, EventArgs e)
@@ -181,6 +142,6 @@ namespace CalcMatrix
                     }
                 }
             }
-        }
+        }                                               
     }
 }

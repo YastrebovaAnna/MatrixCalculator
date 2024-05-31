@@ -8,6 +8,7 @@ using LibraryMatrix.facade;
 using LibraryMatrix.implementations;
 using LibraryMatrix.interfaces;
 using LibraryMatrix.operations;
+using LibraryMatrix.operations.determinant;
 
 namespace CalcMatrix
 {
@@ -15,8 +16,7 @@ namespace CalcMatrix
     {
         private TextBoxMatrix numbers1;
         private IMatrix matrixs;
-
-        private List<Label> resultLabels = new List<Label>();
+        private readonly ILabelService labelService;
         public TextBoxMatrix resultTextBoxMatrix;
         public EventHandler buttonDisplayTextBox_TextChanged { get; private set; }
         public EventHandler MatrixTextBox_TextChanged { get; private set; }
@@ -24,13 +24,9 @@ namespace CalcMatrix
         public FormForTransposing()
         {
             InitializeComponent();
+            IUIFactory factory = new WinFormsUIFactory();
+            labelService = factory.CreateLabelService();
         }
-
-        private void FormForTransposing_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
             int rows = (int)numericUpDownRowsMatrix.Value;
@@ -57,7 +53,7 @@ namespace CalcMatrix
 
         private void buttonTranspositionMatrix_Click_1(object sender, EventArgs e)
         {
-            RemoveResultLabels();
+            labelService.ClearResultLabels(this);
             RemoveResultTextBoxes();
             CalculateMatrix();
         }
@@ -109,7 +105,7 @@ namespace CalcMatrix
                 determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
             }
 
-            AddResultLabel("Детермінант: " + determinant.ToString());
+            labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 100, 500);
 
             if (determinant == 0)
             {
@@ -120,7 +116,7 @@ namespace CalcMatrix
             matrixs = MatrixFacade.Invert(matrix);
         }
 
-      
+
         private void HandleMatrixRotation(IMatrix matrix)
         {
             if (checkBoxSpinsFor.Checked)
@@ -156,29 +152,6 @@ namespace CalcMatrix
             {
                 textBox.ReadOnly = true;
             }
-        }
-
-        private void AddResultLabel(string explanation)
-        {
-            Label label = new Label
-            {
-                Text = explanation,
-                AutoSize = true,
-                Location = new Point(100, 500)
-            };
-            Controls.Add(label);
-            resultLabels.Add(label);
-        }
-
-        private void RemoveResultLabels()
-        {
-            foreach (Label label in resultLabels)
-            {
-                Controls.Remove(label);
-                label.Dispose();
-            }
-
-            resultLabels.Clear();
         }
 
         private void RemoveResultTextBoxes()

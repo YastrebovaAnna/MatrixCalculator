@@ -1,19 +1,13 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.binary
 {
-    public class InequalityOperation : IMatrixBinaryOperation
+    public class InequalityOperation : MatrixBinaryOperationBase
     {
-        public IMatrix Execute(IMatrix matrixA, IMatrix matrixB)
+        protected override double PerformOperation(double valueA, double valueB)
         {
-            var equalityOperation = new EqualityOperation();
-            var result = equalityOperation.Execute(matrixA, matrixB);
-            return new Matrix(1, 1, new double[,] { { result.MatrixArray[0, 0] == 1.0 ? 0.0 : 1.0 } });
-        }
-        public IMatrix Execute(IMatrix matrix)
-        {
-            throw new NotImplementedException("EqualityOperation requires two matrices.");
+            return valueA != valueB ? 1 : 0;
         }
     }
 }

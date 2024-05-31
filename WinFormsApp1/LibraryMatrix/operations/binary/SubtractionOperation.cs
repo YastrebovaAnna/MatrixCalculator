@@ -1,30 +1,13 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
 
-namespace LibraryMatrix.operations
+namespace LibraryMatrix.operations.binary
 {
-    public class SubtractionOperation : IMatrixBinaryOperation
+    public class SubtractionOperation : MatrixBinaryOperationBase
     {
-        public IMatrix Execute(IMatrix matrixA, IMatrix matrixB)
+        protected override double PerformOperation(double valueA, double valueB)
         {
-            if (matrixA.Rows != matrixB.Rows || matrixA.Columns != matrixB.Columns)
-            {
-                throw new InvalidOperationException("Matrices must have the same dimensions for subtraction.");
-            }
-
-            var result = new double[matrixA.Rows, matrixA.Columns];
-            var iterator = new MatrixIterator(matrixA);
-
-            iterator.Iterate((i, j, valueA, valueB) =>
-            {
-                result[i, j] = valueA - valueB;
-            }, matrixB);
-
-            return new Matrix(matrixA.Rows, matrixA.Columns, result);
-        }
-        public IMatrix Execute(IMatrix matrix)
-        {
-            throw new NotImplementedException("EqualityOperation requires two matrices.");
+            return valueA - valueB;
         }
     }
 }
