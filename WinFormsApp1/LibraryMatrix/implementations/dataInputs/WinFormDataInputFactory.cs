@@ -1,11 +1,11 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces.dataInputs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryMatrix.implementations
+namespace LibraryMatrix.implementations.dataInputs
 {
     public class WinFormDataInputFactory : IDataInputFactory
     {

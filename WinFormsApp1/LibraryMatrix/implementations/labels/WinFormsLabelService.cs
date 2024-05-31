@@ -1,6 +1,6 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces.labels;
 
-namespace LibraryMatrix.implementations
+namespace LibraryMatrix.implementations.labels
 {
     public class WinFormsLabelService : ILabelService
     {

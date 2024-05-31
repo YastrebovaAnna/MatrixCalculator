@@ -1,21 +1,26 @@
-﻿using LibraryMatrix;
-using LibraryMatrix.core;
+﻿using LibraryMatrix.core;
 using LibraryMatrix.facade;
-using LibraryMatrix.implementations;
+using LibraryMatrix.implementations.controls;
+using LibraryMatrix.implementations.dataInputs;
+using LibraryMatrix.implementations.labels;
 using LibraryMatrix.interfaces;
-using LibraryMatrix.operations;
+using LibraryMatrix.interfaces.controls;
+using LibraryMatrix.interfaces.dataInputs;
+using LibraryMatrix.interfaces.labels;
 using LibraryMatrix.operations.determinant;
-using Label = System.Windows.Forms.Label;
 
 namespace CalcMatrix
 {
     public partial class FormDetermCharactNumb : Form
     {
+        private IControlManager<IControl> controlManager;
         public TextBoxMatrix textBoxMatrix;
         private readonly ILabelService labelService;
         public FormDetermCharactNumb()
         {
             InitializeComponent();
+            IControlManagerFactory<IControl> factory = new WinFormControlManagerFactory<IControl>();
+            controlManager = factory.CreateControlManager(this);
             labelService = new WinFormsLabelService();
         }
 
@@ -29,7 +34,7 @@ namespace CalcMatrix
 
             foreach (var dataInput in textBoxMatrix.DataInputs)
             {
-                Controls.Add(((WinFormTextBox)dataInput).GetTextBox());
+                controlManager.AddControl((IControl)dataInput);
             }
         }
         private void buttonDetermSol_Click(object sender, EventArgs e)
@@ -132,15 +137,8 @@ namespace CalcMatrix
         {
             if (textBoxMatrix != null)
             {
-                foreach (var dataInput in textBoxMatrix.DataInputs)
-                {
-                    var textBox = ((WinFormTextBox)dataInput).GetTextBox();
-                    if (textBox.Parent == this)
-                    {
-                        Controls.Remove(textBox);
-                        textBox.Dispose();
-                    }
-                }
+                controlManager.ClearControls(textBoxMatrix.DataInputs.Cast<IControl>());
+                textBoxMatrix = null;
             }
         }                                               
     }

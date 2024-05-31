@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryMatrix.interfaces
+namespace LibraryMatrix.interfaces.dataInputs
 {
     public interface IDataInput
     {

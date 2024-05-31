@@ -1,5 +1,4 @@
-﻿
-namespace LibraryMatrix.interfaces
+﻿namespace LibraryMatrix.interfaces.labels
 {
     public interface ILabelService
     {

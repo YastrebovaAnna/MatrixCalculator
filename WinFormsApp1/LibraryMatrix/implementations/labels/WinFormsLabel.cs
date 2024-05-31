@@ -1,8 +1,9 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces.controls;
+using LibraryMatrix.interfaces.labels;
 
-namespace LibraryMatrix.implementations
+namespace LibraryMatrix.implementations.labels
 {
-    public class WinFormsLabel : ILabel
+    public class WinFormsLabel : ILabel, IControl
     {
         private Label label;
 

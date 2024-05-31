@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using LibraryMatrix;
-using LibraryMatrix.core;
+﻿using LibraryMatrix.core;
 using LibraryMatrix.facade;
 using LibraryMatrix.implementations;
+using LibraryMatrix.implementations.controls;
+using LibraryMatrix.implementations.dataInputs;
 using LibraryMatrix.interfaces;
-using LibraryMatrix.operations;
+using LibraryMatrix.interfaces.controls;
+using LibraryMatrix.interfaces.dataInputs;
+using LibraryMatrix.interfaces.labels;
 using LibraryMatrix.operations.determinant;
 
 namespace CalcMatrix
@@ -17,15 +16,17 @@ namespace CalcMatrix
         private TextBoxMatrix numbers1;
         private IMatrix matrixs;
         private readonly ILabelService labelService;
+        private IControlManager<IControl> controlManager;
         public TextBoxMatrix resultTextBoxMatrix;
-        public EventHandler buttonDisplayTextBox_TextChanged { get; private set; }
         public EventHandler MatrixTextBox_TextChanged { get; private set; }
 
         public FormForTransposing()
         {
             InitializeComponent();
-            IUIFactory factory = new WinFormsUIFactory();
-            labelService = factory.CreateLabelService();
+            IControlManagerFactory<IControl> factory = new WinFormControlManagerFactory<IControl>();
+            controlManager = factory.CreateControlManager(this);
+            IUIFactory uiFactory = new WinFormsUIFactory();
+            labelService = uiFactory.CreateLabelService();
         }
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
@@ -54,7 +55,7 @@ namespace CalcMatrix
         private void buttonTranspositionMatrix_Click_1(object sender, EventArgs e)
         {
             labelService.ClearResultLabels(this);
-            RemoveResultTextBoxes();
+            controlManager.RemoveReadOnlyControls();
             CalculateMatrix();
         }
 
@@ -107,12 +108,6 @@ namespace CalcMatrix
 
             labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 100, 500);
 
-            if (determinant == 0)
-            {
-                MessageBox.Show("Детермінант дорівнює 0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             matrixs = MatrixFacade.Invert(matrix);
         }
 
@@ -139,11 +134,7 @@ namespace CalcMatrix
 
             if (resultTextBoxMatrix != null)
             {
-                foreach (var textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
-                {
-                    Controls.Remove(textBox);
-                    textBox.Dispose();
-                }
+                controlManager.ClearControls(resultTextBoxMatrix.DataInputs.Cast<IControl>());
             }
 
             resultTextBoxMatrix = CreateAndDisplayMatrix(resultRows, resultCols, 750, 500);
@@ -154,31 +145,12 @@ namespace CalcMatrix
             }
         }
 
-        private void RemoveResultTextBoxes()
-        {
-            foreach (Control control in Controls.OfType<Control>().ToList())
-            {
-                if (control is TextBox textBox && textBox.ReadOnly)
-                {
-                    Controls.Remove(textBox);
-                    textBox.Dispose();
-                }
-            }
-        }
-
         private void buttonClear_Click(object sender, EventArgs e)
         {
             if (numbers1 != null)
             {
-                foreach (var dataInput in numbers1.DataInputs)
-                {
-                    var textBox = ((WinFormTextBox)dataInput).GetTextBox();
-                    if (textBox.Parent == this)
-                    {
-                        Controls.Remove(textBox);
-                        textBox.Dispose();
-                    }
-                }
+                controlManager.ClearControls(numbers1.DataInputs.Cast<IControl>());
+                numbers1 = null;
             }
         }
     }

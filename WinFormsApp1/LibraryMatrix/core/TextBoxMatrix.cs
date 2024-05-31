@@ -1,4 +1,4 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces.dataInputs;
 
 namespace LibraryMatrix.core
 {

@@ -1,13 +1,14 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.interfaces.controls;
+using LibraryMatrix.interfaces.dataInputs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryMatrix.implementations
+namespace LibraryMatrix.implementations.dataInputs
 {
-    public class WinFormTextBox : IDataInput
+    public class WinFormTextBox : IDataInput, IControl
     {
         private readonly TextBox textBox;
 
@@ -47,5 +48,30 @@ namespace LibraryMatrix.implementations
         }
 
         public TextBox GetTextBox() => textBox;
+
+        public void AddToParent(object parent)
+        {
+            if (parent is Form form)
+            {
+                form.Controls.Add(textBox);
+            }
+        }
+
+        public void RemoveFromParent(object parent)
+        {
+            if (parent is Form form)
+            {
+                form.Controls.Remove(textBox);
+            }
+        }
+        public void SetLocation(int x, int y)
+        {
+            textBox.Location = new Point(x, y);
+        }
+
+        public void SetFont(string fontFamily, int fontSize)
+        {
+            textBox.Font = new Font(fontFamily, fontSize);
+        }
     }
 }
