@@ -47,7 +47,7 @@ namespace LibraryMatrix.core
 
             IterateOverMatrix(textBoxMatrix.Rows, textBoxMatrix.Columns, (row, col) =>
             {
-                textBoxMatrix.DataInputs[row, col].Text = matrix[row, col].ToString("F2"); // Форматування з двома цифрами після коми
+                textBoxMatrix.DataInputs[row, col].Text = matrix[row, col].ToString("F2");
             });
         }
 

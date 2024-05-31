@@ -1,4 +1,5 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
@@ -7,13 +8,13 @@ namespace LibraryMatrix.operations
         public double Execute(IMatrix matrix)
         {
             double product = 1.0;
-            for (int i = 0; i < matrix.Rows; i++)
+            var iterator = new MatrixIterator(matrix);
+
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    product *= matrix.MatrixArray[i, j];
-                }
-            }
+                product *= value;
+            });
+
             return product;
         }
     }

@@ -17,11 +17,15 @@ namespace LibraryMatrix.operations
                 return new Matrix(1, 1, new double[,] { { 0.0 } });
 
             var equal = true;
-            MatrixProcessor.IterateOverMatrix(matrixA.Rows, matrixA.Columns, (i, j) =>
+            var iterator = new MatrixIterator(matrixA);
+
+            iterator.Iterate((i, j, valueA, valueB) =>
             {
-                if (matrixA.MatrixArray[i, j] != matrixB.MatrixArray[i, j])
+                if (valueA != valueB)
+                {
                     equal = false;
-            });
+                }
+            }, matrixB);
 
             return new Matrix(1, 1, new double[,] { { equal ? 1.0 : 0.0 } });
         }

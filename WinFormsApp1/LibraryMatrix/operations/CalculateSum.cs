@@ -1,9 +1,5 @@
-﻿using LibraryMatrix.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
@@ -12,13 +8,13 @@ namespace LibraryMatrix.operations
         public double Execute(IMatrix matrix)
         {
             double sum = 0.0;
-            for (int i = 0; i < matrix.Rows; i++)
+            var iterator = new MatrixIterator(matrix);
+
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    sum += matrix.MatrixArray[i, j];
-                }
-            }
+                sum += value;
+            });
+
             return sum;
         }
     }

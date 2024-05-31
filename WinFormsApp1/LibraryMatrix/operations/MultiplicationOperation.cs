@@ -13,18 +13,21 @@ namespace LibraryMatrix.operations
             }
 
             var result = new double[matrixA.Rows, matrixB.Columns];
-            MatrixProcessor.IterateOverMatrix(matrixA.Rows, matrixB.Columns, (i, j) =>
+            var iterator = new MatrixIterator(matrixA);
+
+            iterator.Iterate((i, j, valueA, valueB) =>
             {
                 for (int k = 0; k < matrixA.Columns; k++)
                 {
                     result[i, j] += matrixA.MatrixArray[i, k] * matrixB.MatrixArray[k, j];
                 }
-            });
+            }, matrixB);
+
             return new Matrix(matrixA.Rows, matrixB.Columns, result);
         }
         public IMatrix Execute(IMatrix matrix)
         {
-            throw new NotImplementedException("EqualityOperation requires two matrices.");
+            throw new NotImplementedException("MultiplicationOperation requires two matrices.");
         }
     }
 }

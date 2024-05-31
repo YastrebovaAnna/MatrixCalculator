@@ -1,4 +1,5 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
@@ -10,8 +11,15 @@ namespace LibraryMatrix.operations
                 throw new InvalidOperationException("Matrix must be square.");
 
             double trace = 0.0;
-            for (int i = 0; i < matrix.Rows; i++)
-                trace += matrix.MatrixArray[i, i];
+            var iterator = new MatrixIterator(matrix);
+
+            iterator.Iterate((i, j, value) =>
+            {
+                if (i == j)
+                {
+                    trace += value;
+                }
+            });
 
             return trace;
         }

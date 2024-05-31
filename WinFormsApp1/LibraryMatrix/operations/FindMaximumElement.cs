@@ -1,9 +1,5 @@
-﻿using LibraryMatrix.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
@@ -12,14 +8,16 @@ namespace LibraryMatrix.operations
         public double Execute(IMatrix matrix)
         {
             double max = double.MinValue;
-            for (int i = 0; i < matrix.Rows; i++)
+            var iterator = new MatrixIterator(matrix);
+
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < matrix.Columns; j++)
+                if (value > max)
                 {
-                    if (matrix.MatrixArray[i, j] > max)
-                        max = matrix.MatrixArray[i, j];
+                    max = value;
                 }
-            }
+            });
+
             return max;
         }
     }

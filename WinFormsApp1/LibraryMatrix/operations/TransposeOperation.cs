@@ -10,14 +10,12 @@ namespace LibraryMatrix.operations
             int transposedRows = matrix.Columns;
             int transposedCols = matrix.Rows;
             double[,] transposedMatrixArray = new double[transposedRows, transposedCols];
+            var iterator = new MatrixIterator(matrix);
 
-            for (int i = 0; i < matrix.Rows; i++)
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    transposedMatrixArray[j, i] = matrix.MatrixArray[i, j];
-                }
-            }
+                transposedMatrixArray[j, i] = value;
+            });
 
             return new Matrix(transposedRows, transposedCols, transposedMatrixArray);
         }

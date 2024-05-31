@@ -1,4 +1,5 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.operations
 {
@@ -7,14 +8,16 @@ namespace LibraryMatrix.operations
         public double Execute(IMatrix matrix)
         {
             double min = double.MaxValue;
-            for (int i = 0; i < matrix.Rows; i++)
+            var iterator = new MatrixIterator(matrix);
+
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < matrix.Columns; j++)
+                if (value < min)
                 {
-                    if (matrix.MatrixArray[i, j] < min)
-                        min = matrix.MatrixArray[i, j];
+                    min = value;
                 }
-            }
+            });
+
             return min;
         }
     }

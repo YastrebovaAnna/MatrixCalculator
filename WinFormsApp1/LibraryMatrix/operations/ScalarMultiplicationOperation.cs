@@ -15,10 +15,11 @@ namespace LibraryMatrix.operations
         public IMatrix Execute(IMatrix matrix)
         {
             double[,] result = new double[matrix.Rows, matrix.Columns];
+            var iterator = new MatrixIterator(matrix);
 
-            MatrixProcessor.IterateOverMatrix(matrix.Rows, matrix.Columns, (i, j) =>
+            iterator.Iterate((i, j, value) =>
             {
-                result[i, j] = matrix.MatrixArray[i, j] * _scalar;
+                result[i, j] = value * _scalar;
             });
 
             return new Matrix(matrix.Rows, matrix.Columns, result);

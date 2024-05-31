@@ -10,14 +10,12 @@ namespace LibraryMatrix.operations
             int rows = matrix.Rows;
             int cols = matrix.Columns;
             double[,] result = new double[rows, cols];
+            var iterator = new MatrixIterator(matrix);
 
-            for (int i = 0; i < rows; i++)
+            iterator.Iterate((i, j, value) =>
             {
-                for (int j = 0; j < cols; j++)
-                {
-                    result[i, j] = Math.Cos(matrix.MatrixArray[i, j]);
-                }
-            }
+                result[i, j] = Math.Cos(value);
+            });
 
             return new Matrix(rows, cols, result);
         }
