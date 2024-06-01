@@ -11,139 +11,52 @@ namespace LibraryMatrix.facade
     {
         private static IMatrixContext CreateContext<T>(IMatrixOperation<T> operation)
         {
-            IMatrixContext context = new MatrixContext();
+            var context = new MatrixContext();
             context.SetStrategy(operation);
             return context;
         }
 
         private static IMatrixContext CreateBinaryContext(IMatrixBinaryOperation operation)
         {
-            IMatrixContext context = new MatrixContext();
+            var context = new MatrixContext();
             context.SetStrategy(operation);
             return context;
         }
-        public static double CalculateDeterminant(IMatrix matrix, IMatrixOperation<double> operation)
+        private static TResult ExecuteOperation<TResult>(IMatrix matrix, IMatrixOperation<TResult> operation)
         {
-            return CreateContext(operation).ExecuteOperation<double>(matrix);
-        }
-        public static int CalculateRank(IMatrix matrix)
-        {
-            return CreateContext(new CalculateRank()).ExecuteOperation<int>(matrix);
+            return CreateContext(operation).ExecuteOperation<TResult>(matrix);
         }
 
-        public static double CalculateTrace(IMatrix matrix)
+        private static IMatrix ExecuteBinaryOperation(IMatrix matrix1, IMatrix matrix2, IMatrixBinaryOperation operation)
         {
-            return CreateContext(new CalculateTrace()).ExecuteOperation<double>(matrix);
+            return CreateBinaryContext(operation).ExecuteBinaryOperation(matrix1, matrix2);
         }
 
-        public static double FindMinimumElement(IMatrix matrix)
-        {
-            return CreateContext(new FindMinimumElement()).ExecuteOperation<double>(matrix);
-        }
+        public static double CalculateDeterminant(IMatrix matrix, IMatrixOperation<double> operation) => ExecuteOperation(matrix, operation);
+        public static int CalculateRank(IMatrix matrix) => ExecuteOperation(matrix, new CalculateRank());
+        public static double CalculateTrace(IMatrix matrix) => ExecuteOperation(matrix, new CalculateTrace());
+        public static double FindMinimumElement(IMatrix matrix) => ExecuteOperation(matrix, new FindMinimumElement());
+        public static double FindMaximumElement(IMatrix matrix) => ExecuteOperation(matrix, new FindMaximumElement());
+        public static double CalculateMatrixNorm(IMatrix matrix) => ExecuteOperation(matrix, new MatrixNormal());
+        public static double CalculateAverage(IMatrix matrix) => ExecuteOperation(matrix, new CalculateAverage());
+        public static double CalculateSum(IMatrix matrix) => ExecuteOperation(matrix, new CalculateSum());
+        public static double CalculateProduct(IMatrix matrix) => ExecuteOperation(matrix, new CalculateProduct());
+        public static IMatrix Exp(IMatrix matrix) => ExecuteOperation(matrix, new ExpOperation());
+        public static IMatrix Log(IMatrix matrix) => ExecuteOperation(matrix, new LogOperation());
+        public static IMatrix Sin(IMatrix matrix) => ExecuteOperation(matrix, new SinOperation());
+        public static IMatrix Cos(IMatrix matrix) => ExecuteOperation(matrix, new CosOperation());
+        public static IMatrix Tan(IMatrix matrix) => ExecuteOperation(matrix, new TanOperation());
+        public static IMatrix MultiplyByScalar(IMatrix matrix, double scalar) => ExecuteOperation(matrix, new ScalarMultiplicationOperation(scalar));
+        public static IMatrix Power(IMatrix matrix, double power) => ExecuteOperation(matrix, new PowerOperation(power));
+        public static IMatrix Transpose(IMatrix matrix) => ExecuteOperation(matrix, new TransposeOperation());
+        public static IMatrix Invert(IMatrix matrix) => ExecuteOperation(matrix, new InvertOperation());
+        public static IMatrix RotateClockwise(IMatrix matrix) => ExecuteOperation(matrix, new RotateClockwiseOperation());
+        public static IMatrix RotateCounterClockwise(IMatrix matrix) => ExecuteOperation(matrix, new RotateCounterClockwiseOperation());
+        public static IMatrix Add(IMatrix matrix1, IMatrix matrix2) => ExecuteBinaryOperation(matrix1, matrix2, new AddOperation());
+        public static IMatrix Subtract(IMatrix matrix1, IMatrix matrix2) => ExecuteBinaryOperation(matrix1, matrix2, new SubtractionOperation());
+        public static IMatrix Multiply(IMatrix matrix1, IMatrix matrix2) => ExecuteBinaryOperation(matrix1, matrix2, new MultiplicationOperation());
+        public static IMatrix Equality(IMatrix matrix1, IMatrix matrix2) => ExecuteBinaryOperation(matrix1, matrix2, new EqualityOperation());
+        public static IMatrix Inequality(IMatrix matrix1, IMatrix matrix2) => ExecuteBinaryOperation(matrix1, matrix2, new InequalityOperation());
 
-        public static double FindMaximumElement(IMatrix matrix)
-        {
-            return CreateContext(new FindMaximumElement()).ExecuteOperation<double>(matrix);
-        }
-
-        public static double CalculateMatrixNorm(IMatrix matrix)
-        {
-            return CreateContext(new MatrixNormal()).ExecuteOperation<double>(matrix);
-        }
-
-        public static double CalculateAverage(IMatrix matrix)
-        {
-            return CreateContext(new CalculateAverage()).ExecuteOperation<double>(matrix);
-        }
-
-        public static double CalculateSum(IMatrix matrix)
-        {
-            return CreateContext(new CalculateSum()).ExecuteOperation<double>(matrix);
-        }
-
-        public static double CalculateProduct(IMatrix matrix)
-        {
-            return CreateContext(new CalculateProduct()).ExecuteOperation<double>(matrix);
-        }
-
-        public static IMatrix Exp(IMatrix matrix)
-        {
-            return CreateContext(new ExpOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Log(IMatrix matrix)
-        {
-            return CreateContext(new LogOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Sin(IMatrix matrix)
-        {
-            return CreateContext(new SinOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Cos(IMatrix matrix)
-        {
-            return CreateContext(new CosOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Tan(IMatrix matrix)
-        {
-            return CreateContext(new TanOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix MultiplyByScalar(IMatrix matrix, double scalar)
-        {
-            return CreateContext(new ScalarMultiplicationOperation(scalar)).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Power(IMatrix matrix, double power)
-        {
-            return CreateContext(new PowerOperation(power)).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Transpose(IMatrix matrix)
-        {
-            return CreateContext(new TransposeOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Invert(IMatrix matrix)
-        {
-            return CreateContext(new InvertOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix RotateClockwise(IMatrix matrix)
-        {
-            return CreateContext(new RotateClockwiseOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix RotateCounterClockwise(IMatrix matrix)
-        {
-            return CreateContext(new RotateCounterClockwiseOperation()).ExecuteOperation<IMatrix>(matrix);
-        }
-
-        public static IMatrix Add(IMatrix matrix1, IMatrix matrix2)
-        {
-            return CreateBinaryContext(new AddOperation()).ExecuteBinaryOperation(matrix1, matrix2);
-        }
-
-        public static IMatrix Subtract(IMatrix matrix1, IMatrix matrix2)
-        {
-            return CreateBinaryContext(new SubtractionOperation()).ExecuteBinaryOperation(matrix1, matrix2);
-        }
-
-        public static IMatrix Multiply(IMatrix matrix1, IMatrix matrix2)
-        {
-            return CreateBinaryContext(new MultiplicationOperation()).ExecuteBinaryOperation(matrix1, matrix2);
-        }
-
-        public static IMatrix Equality(IMatrix matrix1, IMatrix matrix2)
-        {
-            return CreateBinaryContext(new EqualityOperation()).ExecuteBinaryOperation(matrix1, matrix2);
-        }
-
-        public static IMatrix Inequality(IMatrix matrix1, IMatrix matrix2)
-        {
-            return CreateBinaryContext(new InequalityOperation()).ExecuteBinaryOperation(matrix1, matrix2);
-        }
     }
 }

@@ -27,6 +27,7 @@ namespace CalcMatrix
             controlManager = factory.CreateControlManager(this);
             IUIFactory uiFactory = new WinFormsUIFactory();
             labelService = uiFactory.CreateLabelService();
+            MessageBoxHelper.ShowMessage = message => MessageBox.Show(message);
         }
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
@@ -64,7 +65,7 @@ namespace CalcMatrix
             double[,] matrixValues = MatrixProcessor.GetMatrixValues(numbers1);
             if (matrixValues == null)
             {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxHelper.Show("The data entered is incorrect, please check and try again!");
                 return;
             }
 
@@ -90,23 +91,9 @@ namespace CalcMatrix
 
         private void HandleMatrixInversion(IMatrix matrix)
         {
-            if (matrix.Rows != matrix.Columns)
-            {
-                MessageBox.Show("Матриця має бути квадратною", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             double determinant;
-            if (matrix.Rows == 2 && matrix.Columns == 2)
-            {
-                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-            }
-            else
-            {
-                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-            }
-
-            labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 100, 500);
+            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+            labelService.AddResultLabel(this, "Determinant: " + determinant.ToString(), 100, 500);
 
             matrixs = MatrixFacade.Invert(matrix);
         }
@@ -124,7 +111,6 @@ namespace CalcMatrix
         {
             if (resultMatrix == null)
             {
-                MessageBox.Show("Результуюча матриця пуста.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -137,8 +123,17 @@ namespace CalcMatrix
                 controlManager.ClearControls(resultTextBoxMatrix.DataInputs.Cast<IControl>());
             }
 
-            resultTextBoxMatrix = CreateAndDisplayMatrix(resultRows, resultCols, 750, 500);
+            int labelX = 750;
+            int labelY = 480;
+            labelService.ClearResultLabels(this);
+            labelService.AddResultLabel(this, "Result", labelX, labelY);
+
+            int matrixX = 750;
+            int matrixY = labelY + 30;
+
+            resultTextBoxMatrix = CreateAndDisplayMatrix(resultRows, resultCols, matrixX, matrixY);
             MatrixProcessor.SetMatrixValues(resultTextBoxMatrix, resultMatrixArray);
+
             foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))
             {
                 textBox.ReadOnly = true;

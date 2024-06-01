@@ -1,4 +1,5 @@
-﻿using LibraryMatrix.interfaces;
+﻿using LibraryMatrix.core;
+using LibraryMatrix.interfaces;
 
 namespace LibraryMatrix.calculator
 {
@@ -17,7 +18,8 @@ namespace LibraryMatrix.calculator
             {
                 return operation.Execute(matrix);
             }
-            throw new InvalidOperationException("Operation strategy is not set.");
+            MessageBoxHelper.Show("Operation strategy is not set.");
+            return default(T);
         }
 
         public IMatrix ExecuteBinaryOperation(IMatrix matrix1, IMatrix matrix2)
@@ -26,7 +28,8 @@ namespace LibraryMatrix.calculator
             {
                 return operation.Execute(matrix1, matrix2);
             }
-            throw new InvalidOperationException("Binary operation strategy is not set.");
+            MessageBoxHelper.Show("Binary operation strategy is not set.");
+            return null;
         }
     }
 }

@@ -22,117 +22,103 @@ namespace CalcMatrix
             IControlManagerFactory<IControl> factory = new WinFormControlManagerFactory<IControl>();
             controlManager = factory.CreateControlManager(this);
             labelService = new WinFormsLabelService();
+            MessageBoxHelper.ShowMessage = message => MessageBox.Show(message);
         }
 
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
-            int rows = (int)numericUpDownRowsMatrix.Value;
-            int cols = (int)numericUpDownColMatrix.Value;
-
-            IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
-            textBoxMatrix = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
-
-            foreach (var dataInput in textBoxMatrix.DataInputs)
+            try
             {
-                controlManager.AddControl((IControl)dataInput);
+                int rows = (int)numericUpDownRowsMatrix.Value;
+                int cols = (int)numericUpDownColMatrix.Value;
+
+                IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
+                textBoxMatrix = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
+
+                foreach (var dataInput in textBoxMatrix.DataInputs)
+                {
+                    controlManager.AddControl((IControl)dataInput);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error when creating the matrix: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonDetermSol_Click(object sender, EventArgs e)
         {
             double[,] matrixValues = MatrixProcessor.GetMatrixValues(textBoxMatrix);
-            if (matrixValues != null)
+            if (matrixValues == null)
             {
-                int rows = textBoxMatrix.Rows;
-                int cols = textBoxMatrix.Columns;
-                IMatrix matrix = new Matrix(rows, cols, matrixValues);
-                labelService.ClearResultLabels(this);
-                double determinant = 0.0;
-                if (checkBoxDeterm.Checked)
+                MessageBox.Show("The data entered is incorrect, please check and try again!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int rows = textBoxMatrix.Rows;
+            int cols = textBoxMatrix.Columns;
+            IMatrix matrix = new Matrix(rows, cols, matrixValues);
+            labelService.ClearResultLabels(this);
+
+            double determinant = 0.0;
+            if (checkBoxDeterm.Checked)
+            {
+                bool isSmallMatrix = (rows == 1 && cols == 1) || (rows == 2 && cols == 2);
+                bool isThreeByThreeMatrix = rows == 3 && cols == 3;
+
+                if (isSmallMatrix || isThreeByThreeMatrix)
                 {
-                    if (rows == 1 && cols == 1 || rows == 2 && cols == 2 || (rows == 3 && cols == 3))
+                    if (isThreeByThreeMatrix)
                     {
-                        if (rows == 1 && cols == 1 || rows == 2 && cols == 2)
+                        if (radioButtonTriangle.Checked)
                         {
                             determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-                            labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
                         }
-                        else if (rows == 3 && cols == 3)
+                        else if (radioButtonSar.Checked)
                         {
-                            if (radioButtonTriangle.Checked)
-                            {
-                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-                                labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
-                            }
-                            else if (radioButtonSar.Checked)
-                            {
-                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
-                                labelService.AddResultLabel(this, "Детермінант: " + determinant.ToString(), 800, 300);
-                            }
-                            else if (radioButtonRoz.Checked)
-                            {
-                                determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-                                labelService.AddResultLabel(this, $"Детермінант: " + determinant.ToString(), 800, 300);
-                            }
+                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
+                        }
+                        else if (radioButtonRoz.Checked)
+                        {
+                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
                         }
                     }
                     else
                     {
-                        determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-                        labelService.AddResultLabel(this, $"Детермінант: " + determinant.ToString(), 800, 300);
+                        determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
                     }
                 }
-                if (checkBoxRank.Checked)
+                else
                 {
-                    int rank = MatrixFacade.CalculateRank(matrix);
-                    labelService.AddResultLabel(this, "Ранг: " + rank.ToString(), 800, 300);
+                    determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
                 }
 
-                if (checkBoxShall.Checked)
-                {
-                    double trace = MatrixFacade.CalculateTrace(matrix);
-                    labelService.AddResultLabel(this, $"Слід матриці: {trace}", 800, 300);
-                }
+                labelService.AddResultLabel(this, "Determinant: " + determinant.ToString(), 800, 300);
+            }
+            CalculateAndDisplayMetrics(matrix);
+        }
+        private void CalculateAndDisplayMetrics(IMatrix matrix)
+        {
+            var metrics = new (CheckBox, Func<IMatrix, double>, string)[]
+            {
+                (checkBoxRank, m => MatrixFacade.CalculateRank(m), "Rank: "),
+                (checkBoxShall, m => MatrixFacade.CalculateTrace(m), "Trace matrix: "),
+                (checkBoxMinelem, m => MatrixFacade.FindMinimumElement(m), "Minimal element: "),
+                (checkBoxMaxElem, m => MatrixFacade.FindMaximumElement(m), "Maximum element: "),
+                (checkBoxNorm, m => MatrixFacade.CalculateMatrixNorm(m), "Matrix norm: "),
+                (checkBoxAverage, m => MatrixFacade.CalculateAverage(m), "Average value: "),
+                (checkBoxSum, m => MatrixFacade.CalculateSum(m), "Sum of elements: "),
+                (checkBoxProd, m => MatrixFacade.CalculateProduct(m), "Product of elements: ")
+            };
 
-                if (checkBoxMinelem.Checked)
+            foreach (var (checkBox, calculation, label) in metrics)
+            {
+                if (checkBox.Checked)
                 {
-                    double minimumElement = MatrixFacade.FindMinimumElement(matrix);
-                    labelService.AddResultLabel(this, $"Мінімальний елемент: {minimumElement}", 800, 300);
-                }
-
-                if (checkBoxMaxElem.Checked)
-                {
-                    double maximumElement = MatrixFacade.FindMaximumElement(matrix);
-                    labelService.AddResultLabel(this, $"Максимальний елемент: {maximumElement}", 800, 300);
-                }
-
-                if (checkBoxNorm.Checked)
-                {
-                    double normal = MatrixFacade.CalculateMatrixNorm(matrix);
-                    labelService.AddResultLabel(this, $"Норма матриці: {normal}", 800, 300);
-                }
-
-                if (checkBoxAverage.Checked)
-                {
-                    double average = MatrixFacade.CalculateAverage(matrix);
-                    labelService.AddResultLabel(this, $"Середнє значення: {average}", 800, 300);
-                }
-
-                if (checkBoxSum.Checked)
-                {
-                    double sum = MatrixFacade.CalculateSum(matrix);
-                    labelService.AddResultLabel(this, $"Сума елементів: {sum}", 800, 300);
-                }
-
-                if (checkBoxProd.Checked)
-                {
-                    double product = MatrixFacade.CalculateProduct(matrix);
-                    labelService.AddResultLabel(this, $"Добуток елементів: {product}", 800, 300);
+                    var result = calculation(matrix);
+                    labelService.AddResultLabel(this, $"{label} {result}", 800, 300);
                 }
             }
-            else
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
         private void buttonClear1_Click(object sender, EventArgs e)
         {
             if (textBoxMatrix != null)

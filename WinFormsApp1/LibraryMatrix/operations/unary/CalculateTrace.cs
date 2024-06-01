@@ -1,14 +1,22 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
+using LibraryMatrix.validators;
 
 namespace LibraryMatrix.operations.unary
 {
     public class CalculateTrace : IMatrixOperation<double>
     {
+        private readonly IUnaryMatrixSizeValidator _sizeValidator;
+
+        public CalculateTrace()
+        {
+            _sizeValidator = new SquareMatrixValidator();
+        }
+
         public double Execute(IMatrix matrix)
         {
-            if (matrix.Rows != matrix.Columns)
-                throw new InvalidOperationException("Matrix must be square.");
+            _sizeValidator.Validate(matrix);
 
             double trace = 0.0;
             var iterator = new MatrixIterator(matrix);

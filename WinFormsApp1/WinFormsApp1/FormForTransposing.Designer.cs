@@ -71,7 +71,7 @@
             buttonDisplayTextBox.Name = "buttonDisplayTextBox";
             buttonDisplayTextBox.Size = new Size(110, 32);
             buttonDisplayTextBox.TabIndex = 20;
-            buttonDisplayTextBox.Text = "Вивести:";
+            buttonDisplayTextBox.Text = "Output:";
             buttonDisplayTextBox.UseVisualStyleBackColor = true;
             buttonDisplayTextBox.Click += buttonDisplayTextBox_Click;
             // 
@@ -92,9 +92,9 @@
             labelcolumns.ForeColor = SystemColors.ActiveCaptionText;
             labelcolumns.Location = new Point(180, 125);
             labelcolumns.Name = "labelcolumns";
-            labelcolumns.Size = new Size(99, 27);
+            labelcolumns.Size = new Size(103, 27);
             labelcolumns.TabIndex = 18;
-            labelcolumns.Text = "Стовпці:";
+            labelcolumns.Text = "Columns:";
             // 
             // labelrows
             // 
@@ -103,9 +103,9 @@
             labelrows.ForeColor = SystemColors.ActiveCaptionText;
             labelrows.Location = new Point(85, 125);
             labelrows.Name = "labelrows";
-            labelrows.Size = new Size(79, 27);
+            labelrows.Size = new Size(72, 27);
             labelrows.TabIndex = 17;
-            labelrows.Text = "Рядки:";
+            labelrows.Text = "Rows:";
             // 
             // labelMatrixA
             // 
@@ -114,9 +114,9 @@
             labelMatrixA.ForeColor = SystemColors.ActiveCaptionText;
             labelMatrixA.Location = new Point(85, 85);
             labelMatrixA.Name = "labelMatrixA";
-            labelMatrixA.Size = new Size(131, 27);
+            labelMatrixA.Size = new Size(106, 27);
             labelMatrixA.TabIndex = 16;
-            labelMatrixA.Text = "Матриця А:";
+            labelMatrixA.Text = "Matrix А:";
             // 
             // numericUpDownRowsMatrix
             // 
@@ -153,11 +153,11 @@
             buttonTranspositionMatrix.FlatAppearance.BorderSize = 0;
             buttonTranspositionMatrix.FlatStyle = FlatStyle.Flat;
             buttonTranspositionMatrix.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonTranspositionMatrix.Location = new Point(772, 361);
+            buttonTranspositionMatrix.Location = new Point(830, 295);
             buttonTranspositionMatrix.Name = "buttonTranspositionMatrix";
             buttonTranspositionMatrix.Size = new Size(194, 36);
             buttonTranspositionMatrix.TabIndex = 21;
-            buttonTranspositionMatrix.Text = "Обрахувати:";
+            buttonTranspositionMatrix.Text = "Calculate";
             buttonTranspositionMatrix.UseVisualStyleBackColor = true;
             buttonTranspositionMatrix.Click += buttonTranspositionMatrix_Click_1;
             // 
@@ -165,66 +165,66 @@
             // 
             checkBoxTransp.AutoSize = true;
             checkBoxTransp.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxTransp.Location = new Point(569, 82);
+            checkBoxTransp.Location = new Point(511, 82);
             checkBoxTransp.Name = "checkBoxTransp";
-            checkBoxTransp.Size = new Size(269, 30);
+            checkBoxTransp.Size = new Size(206, 30);
             checkBoxTransp.TabIndex = 25;
-            checkBoxTransp.Text = "Транспонована матриця";
+            checkBoxTransp.Text = "Transposed matrix";
             checkBoxTransp.UseVisualStyleBackColor = true;
             // 
             // checkBoxInvers
             // 
             checkBoxInvers.AutoSize = true;
             checkBoxInvers.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxInvers.Location = new Point(569, 128);
+            checkBoxInvers.Location = new Point(511, 128);
             checkBoxInvers.Name = "checkBoxInvers";
-            checkBoxInvers.Size = new Size(216, 30);
+            checkBoxInvers.Size = new Size(168, 30);
             checkBoxInvers.TabIndex = 26;
-            checkBoxInvers.Text = "Обернена матриця";
+            checkBoxInvers.Text = "Inverse matrix";
             checkBoxInvers.UseVisualStyleBackColor = true;
             // 
             // checkBoxRotate
             // 
             checkBoxRotate.AutoSize = true;
             checkBoxRotate.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxRotate.Location = new Point(954, 85);
+            checkBoxRotate.Location = new Point(956, 81);
             checkBoxRotate.Name = "checkBoxRotate";
-            checkBoxRotate.Size = new Size(229, 31);
+            checkBoxRotate.Size = new Size(223, 31);
             checkBoxRotate.TabIndex = 31;
-            checkBoxRotate.Text = "Обертання матриці";
+            checkBoxRotate.Text = "Rotating the Matrix";
             checkBoxRotate.UseVisualStyleBackColor = true;
             // 
             // checkBoxSpinsFor
             // 
             checkBoxSpinsFor.AutoSize = true;
             checkBoxSpinsFor.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxSpinsFor.Location = new Point(986, 149);
+            checkBoxSpinsFor.Location = new Point(988, 145);
             checkBoxSpinsFor.Name = "checkBoxSpinsFor";
-            checkBoxSpinsFor.Size = new Size(263, 26);
+            checkBoxSpinsFor.Size = new Size(117, 26);
             checkBoxSpinsFor.TabIndex = 32;
-            checkBoxSpinsFor.Text = "За годинниковою стрілкою";
+            checkBoxSpinsFor.Text = "Clockwise";
             checkBoxSpinsFor.UseVisualStyleBackColor = true;
             // 
             // checkBoxRotationCounter
             // 
             checkBoxRotationCounter.AutoSize = true;
             checkBoxRotationCounter.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxRotationCounter.Location = new Point(986, 117);
+            checkBoxRotationCounter.Location = new Point(988, 113);
             checkBoxRotationCounter.Name = "checkBoxRotationCounter";
-            checkBoxRotationCounter.Size = new Size(262, 26);
+            checkBoxRotationCounter.Size = new Size(175, 26);
             checkBoxRotationCounter.TabIndex = 33;
-            checkBoxRotationCounter.Text = "Проти годинникої стрілки ";
+            checkBoxRotationCounter.Text = "Counterclockwise";
             checkBoxRotationCounter.UseVisualStyleBackColor = true;
             // 
             // checkBoxSwapRows
             // 
             checkBoxSwapRows.AutoSize = true;
             checkBoxSwapRows.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBoxSwapRows.Location = new Point(954, 191);
+            checkBoxSwapRows.Location = new Point(956, 187);
             checkBoxSwapRows.Name = "checkBoxSwapRows";
-            checkBoxSwapRows.Size = new Size(332, 31);
+            checkBoxSwapRows.Size = new Size(298, 31);
             checkBoxSwapRows.TabIndex = 34;
-            checkBoxSwapRows.Text = "Перестановка рядків матриці";
+            checkBoxSwapRows.Text = "Permutation of matrix rows";
             checkBoxSwapRows.UseVisualStyleBackColor = true;
             // 
             // numericUpDownRows2Swap
@@ -232,7 +232,7 @@
             numericUpDownRows2Swap.BackColor = Color.FromArgb(217, 204, 195);
             numericUpDownRows2Swap.BorderStyle = BorderStyle.None;
             numericUpDownRows2Swap.Font = new Font("Times New Roman", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDownRows2Swap.Location = new Point(1160, 249);
+            numericUpDownRows2Swap.Location = new Point(1162, 245);
             numericUpDownRows2Swap.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
             numericUpDownRows2Swap.Name = "numericUpDownRows2Swap";
             numericUpDownRows2Swap.Size = new Size(49, 24);
@@ -243,7 +243,7 @@
             numericUpDownRows1Swap.BackColor = Color.FromArgb(217, 204, 195);
             numericUpDownRows1Swap.BorderStyle = BorderStyle.None;
             numericUpDownRows1Swap.Font = new Font("Times New Roman", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDownRows1Swap.Location = new Point(1042, 249);
+            numericUpDownRows1Swap.Location = new Point(1044, 245);
             numericUpDownRows1Swap.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
             numericUpDownRows1Swap.Name = "numericUpDownRows1Swap";
             numericUpDownRows1Swap.Size = new Size(45, 24);
@@ -253,48 +253,48 @@
             // 
             labelRows1.AutoSize = true;
             labelRows1.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            labelRows1.Location = new Point(1000, 223);
+            labelRows1.Location = new Point(1002, 219);
             labelRows1.Name = "labelRows1";
-            labelRows1.Size = new Size(74, 22);
+            labelRows1.Size = new Size(63, 22);
             labelRows1.TabIndex = 37;
-            labelRows1.Text = "Рядок 1";
+            labelRows1.Text = "Row 1";
             // 
             // labelRows2
             // 
             labelRows2.AutoSize = true;
             labelRows2.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            labelRows2.Location = new Point(1129, 223);
+            labelRows2.Location = new Point(1131, 219);
             labelRows2.Name = "labelRows2";
-            labelRows2.Size = new Size(74, 22);
+            labelRows2.Size = new Size(63, 22);
             labelRows2.TabIndex = 38;
-            labelRows2.Text = "Рядок 2";
+            labelRows2.Text = "Row 2";
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(1119, 318);
+            label1.Location = new Point(676, 227);
             label1.Name = "label1";
-            label1.Size = new Size(105, 22);
+            label1.Size = new Size(86, 22);
             label1.TabIndex = 43;
-            label1.Text = "Стовбець 2";
+            label1.Text = "Column 2";
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(986, 318);
+            label2.Location = new Point(543, 227);
             label2.Name = "label2";
-            label2.Size = new Size(105, 22);
+            label2.Size = new Size(86, 22);
             label2.TabIndex = 42;
-            label2.Text = "Стовбець 1";
+            label2.Text = "Column 1";
             // 
             // numericUpDown1
             // 
             numericUpDown1.BackColor = Color.FromArgb(217, 204, 195);
             numericUpDown1.BorderStyle = BorderStyle.None;
             numericUpDown1.Font = new Font("Times New Roman", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDown1.Location = new Point(1175, 343);
+            numericUpDown1.Location = new Point(732, 252);
             numericUpDown1.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(49, 24);
@@ -305,7 +305,7 @@
             numericUpDown2.BackColor = Color.FromArgb(217, 204, 195);
             numericUpDown2.BorderStyle = BorderStyle.None;
             numericUpDown2.Font = new Font("Times New Roman", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
-            numericUpDown2.Location = new Point(1057, 343);
+            numericUpDown2.Location = new Point(614, 252);
             numericUpDown2.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
             numericUpDown2.Name = "numericUpDown2";
             numericUpDown2.Size = new Size(45, 24);
@@ -315,11 +315,11 @@
             // 
             checkBox1.AutoSize = true;
             checkBox1.Font = new Font("Times New Roman", 14F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBox1.Location = new Point(954, 282);
+            checkBox1.Location = new Point(511, 191);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(354, 31);
+            checkBox1.Size = new Size(332, 31);
             checkBox1.TabIndex = 39;
-            checkBox1.Text = "Перестановка стовбців матриці";
+            checkBox1.Text = "Permutation of matrix columns";
             checkBox1.UseVisualStyleBackColor = true;
             // 
             // buttonClear
@@ -331,7 +331,7 @@
             buttonClear.Name = "buttonClear";
             buttonClear.Size = new Size(124, 35);
             buttonClear.TabIndex = 45;
-            buttonClear.Text = "Видалити";
+            buttonClear.Text = "Delete";
             buttonClear.UseVisualStyleBackColor = true;
             buttonClear.Click += buttonClear_Click;
             // 

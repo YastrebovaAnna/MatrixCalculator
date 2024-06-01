@@ -1,10 +1,5 @@
 ﻿using LibraryMatrix.interfaces.controls;
 using LibraryMatrix.interfaces.dataInputs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibraryMatrix.implementations.dataInputs
 {

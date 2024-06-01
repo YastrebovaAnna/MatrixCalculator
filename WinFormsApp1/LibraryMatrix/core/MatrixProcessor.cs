@@ -1,4 +1,6 @@
 ﻿
+using System.Windows.Forms;
+
 namespace LibraryMatrix.core
 {
     public static class MatrixProcessor
@@ -15,14 +17,14 @@ namespace LibraryMatrix.core
         public static void SetMatrixValues(TextBoxMatrix textBoxMatrix, double[,] matrix)
         {
             if (textBoxMatrix == null)
-                throw new ArgumentNullException(nameof(textBoxMatrix));
+                MessageBoxHelper.Show($"{nameof(textBoxMatrix)}");
 
             if (matrix == null)
-                throw new ArgumentNullException(nameof(matrix));
+                MessageBoxHelper.Show($"{(nameof(matrix))}");
 
             if (!IsMatrixSizeValid(textBoxMatrix, matrix))
             {
-                ErrorHandler.ShowErrorMessage("Невірні розміри матриці.");
+                MessageBoxHelper.Show($"Incorrect dimensions of the matrix.");
                 return;
             }
 

@@ -1,25 +1,26 @@
 ﻿using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
 using LibraryMatrix.operations.unary;
+using LibraryMatrix.validators;
 
 namespace LibraryMatrix.operations.determinant
 {
     public class CalculateDeterminantRecursive : IMatrixOperation<double>
     {
         private readonly SubMatrixCreator _subMatrixCreator;
+        private readonly IUnaryMatrixSizeValidator _sizeValidator;
 
         public CalculateDeterminantRecursive()
         {
             _subMatrixCreator = new SubMatrixCreator();
+            _sizeValidator = new SquareMatrixValidator();
         }
 
         public double Execute(IMatrix matrix)
         {
-            if (matrix.Rows != matrix.Columns)
-                throw new InvalidOperationException("Matrix must be square.");
-
+            _sizeValidator.Validate(matrix);
             return Determinant(matrix.MatrixArray);
         }
-
         private double Determinant(double[,] matrix)
         {
             int n = matrix.GetLength(0);

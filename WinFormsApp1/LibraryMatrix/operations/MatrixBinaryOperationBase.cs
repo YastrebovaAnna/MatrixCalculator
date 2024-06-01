@@ -1,18 +1,23 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
 
 namespace LibraryMatrix.operations
 {
     public abstract class MatrixBinaryOperationBase : IMatrixBinaryOperation
     {
+        private readonly IMatrixSizeValidator? _sizeValidator;
+
+        protected MatrixBinaryOperationBase(IMatrixSizeValidator? sizeValidator = null)
+        {
+            _sizeValidator = sizeValidator;
+        }
+
         protected abstract double PerformOperation(double valueA, double valueB);
 
         public IMatrix Execute(IMatrix matrixA, IMatrix matrixB)
         {
-            if (matrixA.Rows != matrixB.Rows || matrixA.Columns != matrixB.Columns)
-            {
-                throw new InvalidOperationException("Matrices must have the same dimensions for this operation.");
-            }
+            _sizeValidator?.Validate(matrixA, matrixB);
 
             var result = new double[matrixA.Rows, matrixA.Columns];
             var iterator = new MatrixIterator(matrixA);

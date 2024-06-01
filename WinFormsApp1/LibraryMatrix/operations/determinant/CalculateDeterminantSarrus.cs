@@ -1,13 +1,21 @@
 ﻿using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
+using LibraryMatrix.validators;
 
 namespace LibraryMatrix.operations.determinant
 {
     public class CalculateDeterminantSarrus : IMatrixOperation<double>
     {
+        private readonly IFixedSizeMatrixValidator _sizeValidator;
+
+        public CalculateDeterminantSarrus()
+        {
+            _sizeValidator = new FixedSizeMatrixValidator();
+        }
+
         public double Execute(IMatrix matrix)
         {
-            if (matrix.Rows != 3 || matrix.Columns != 3)
-                throw new InvalidOperationException("Matrix must be 3x3 for Sarrus method.");
+            _sizeValidator.Validate(matrix, 3, 3);
 
             double[,] m = matrix.MatrixArray;
             return

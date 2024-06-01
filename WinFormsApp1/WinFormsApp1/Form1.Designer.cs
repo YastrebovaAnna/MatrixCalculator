@@ -91,7 +91,7 @@
             buttonExitProg.Padding = new Padding(10, 20, 0, 0);
             buttonExitProg.Size = new Size(264, 58);
             buttonExitProg.TabIndex = 12;
-            buttonExitProg.Text = "        Вихід";
+            buttonExitProg.Text = "        Exit";
             buttonExitProg.TextAlign = ContentAlignment.MiddleLeft;
             buttonExitProg.UseVisualStyleBackColor = false;
             buttonExitProg.Click += buttonExitProg_Click;
@@ -112,7 +112,7 @@
             buttonMin.Padding = new Padding(10, 20, 0, 0);
             buttonMin.Size = new Size(264, 69);
             buttonMin.TabIndex = 11;
-            buttonMin.Text = "        Згорнути";
+            buttonMin.Text = "        Collapse";
             buttonMin.TextAlign = ContentAlignment.MiddleLeft;
             buttonMin.UseVisualStyleBackColor = false;
             buttonMin.Click += buttonExit_Click_1;
@@ -133,7 +133,7 @@
             buttonbackpagehome.Padding = new Padding(10, 20, 0, 0);
             buttonbackpagehome.Size = new Size(264, 85);
             buttonbackpagehome.TabIndex = 10;
-            buttonbackpagehome.Text = "       Повернутись на                      головну";
+            buttonbackpagehome.Text = "       Return to Home";
             buttonbackpagehome.TextAlign = ContentAlignment.MiddleLeft;
             buttonbackpagehome.UseVisualStyleBackColor = false;
             buttonbackpagehome.Click += buttonbackpagehome_Click;
@@ -166,7 +166,7 @@
             bttnMaxElem.Padding = new Padding(30, 0, 0, 0);
             bttnMaxElem.Size = new Size(264, 40);
             bttnMaxElem.TabIndex = 7;
-            bttnMaxElem.Text = "Максимальний елемент";
+            bttnMaxElem.Text = "Maximum element";
             bttnMaxElem.TextAlign = ContentAlignment.MiddleLeft;
             bttnMaxElem.UseVisualStyleBackColor = true;
             bttnMaxElem.Click += bttnMaxElem_Click;
@@ -184,7 +184,7 @@
             bttnMinElem.Padding = new Padding(30, 0, 0, 0);
             bttnMinElem.Size = new Size(264, 40);
             bttnMinElem.TabIndex = 6;
-            bttnMinElem.Text = "Мінімальний елемент";
+            bttnMinElem.Text = "Minimum element";
             bttnMinElem.TextAlign = ContentAlignment.MiddleLeft;
             bttnMinElem.UseVisualStyleBackColor = true;
             bttnMinElem.Click += bttnMinElem_Click;
@@ -202,7 +202,7 @@
             bttnTraceOfTheMatrix.Padding = new Padding(30, 0, 0, 0);
             bttnTraceOfTheMatrix.Size = new Size(264, 39);
             bttnTraceOfTheMatrix.TabIndex = 3;
-            bttnTraceOfTheMatrix.Text = "Слід матриці";
+            bttnTraceOfTheMatrix.Text = "Matrix trace";
             bttnTraceOfTheMatrix.TextAlign = ContentAlignment.MiddleLeft;
             bttnTraceOfTheMatrix.UseVisualStyleBackColor = true;
             bttnTraceOfTheMatrix.Click += bttnTraceOfTheMatrix_Click;
@@ -220,7 +220,7 @@
             bttnRank.Padding = new Padding(30, 0, 0, 0);
             bttnRank.Size = new Size(264, 39);
             bttnRank.TabIndex = 2;
-            bttnRank.Text = "Ранг";
+            bttnRank.Text = "Rank";
             bttnRank.TextAlign = ContentAlignment.MiddleLeft;
             bttnRank.UseVisualStyleBackColor = true;
             bttnRank.Click += bttnRank_Click;
@@ -238,7 +238,7 @@
             bttnDeterminant.Padding = new Padding(30, 0, 0, 0);
             bttnDeterminant.Size = new Size(264, 39);
             bttnDeterminant.TabIndex = 1;
-            bttnDeterminant.Text = "Детермінант";
+            bttnDeterminant.Text = "Determinant";
             bttnDeterminant.TextAlign = ContentAlignment.MiddleLeft;
             bttnDeterminant.UseVisualStyleBackColor = true;
             bttnDeterminant.Click += bttnDeterminant_Click;
@@ -259,7 +259,7 @@
             bttnDeter.Padding = new Padding(0, 20, 0, 0);
             bttnDeter.Size = new Size(264, 86);
             bttnDeter.TabIndex = 5;
-            bttnDeter.Text = "Визначники / характеристичні числа";
+            bttnDeter.Text = "Determinants / characteristic numbers";
             bttnDeter.UseVisualStyleBackColor = false;
             bttnDeter.Click += bttnDeter_Click;
             // 
@@ -288,7 +288,7 @@
             bttnInversion.Padding = new Padding(30, 0, 0, 0);
             bttnInversion.Size = new Size(264, 46);
             bttnInversion.TabIndex = 2;
-            bttnInversion.Text = "Обернена матриця";
+            bttnInversion.Text = "Inverse matrix";
             bttnInversion.TextAlign = ContentAlignment.MiddleLeft;
             bttnInversion.UseVisualStyleBackColor = true;
             bttnInversion.Click += bttnInversion_Click;
@@ -306,7 +306,7 @@
             bttnTransformMat.Padding = new Padding(30, 0, 0, 0);
             bttnTransformMat.Size = new Size(264, 39);
             bttnTransformMat.TabIndex = 1;
-            bttnTransformMat.Text = "Транспонована матриця";
+            bttnTransformMat.Text = "Transposed matrix";
             bttnTransformMat.TextAlign = ContentAlignment.MiddleLeft;
             bttnTransformMat.UseVisualStyleBackColor = true;
             bttnTransformMat.Click += bttnTransformMat_Click;
@@ -327,7 +327,7 @@
             bttnTransform.Padding = new Padding(0, 20, 0, 0);
             bttnTransform.Size = new Size(264, 72);
             bttnTransform.TabIndex = 3;
-            bttnTransform.Text = "  Трансформаційні дії";
+            bttnTransform.Text = "  Transformational";
             bttnTransform.UseVisualStyleBackColor = false;
             bttnTransform.Click += bttnTransform_Click;
             // 
@@ -346,7 +346,7 @@
             bttnArithmeticOp.Name = "bttnArithmeticOp";
             bttnArithmeticOp.Size = new Size(264, 85);
             bttnArithmeticOp.TabIndex = 1;
-            bttnArithmeticOp.Text = "Арифметичні дії";
+            bttnArithmeticOp.Text = "  Arithmetic";
             bttnArithmeticOp.UseVisualStyleBackColor = false;
             bttnArithmeticOp.Click += bttnArithmeticOp_Click;
             // 
@@ -382,12 +382,12 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Vivaldi", 36F, FontStyle.Italic, GraphicsUnit.Point);
+            label1.Font = new Font("Vivaldi", 50F, FontStyle.Italic, GraphicsUnit.Point);
             label1.Location = new Point(297, 308);
             label1.Name = "label1";
-            label1.Size = new Size(645, 71);
+            label1.Size = new Size(577, 100);
             label1.TabIndex = 0;
-            label1.Text = "Калькулятор Матриць";
+            label1.Text = "Matrix Calculator";
             // 
             // Form1
             // 

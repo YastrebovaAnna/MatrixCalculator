@@ -4,9 +4,11 @@ using LibraryMatrix.core;
 using LibraryMatrix.facade;
 using LibraryMatrix.implementations.controls;
 using LibraryMatrix.implementations.dataInputs;
+using LibraryMatrix.implementations.labels;
 using LibraryMatrix.interfaces;
 using LibraryMatrix.interfaces.controls;
 using LibraryMatrix.interfaces.dataInputs;
+using LibraryMatrix.interfaces.labels;
 using LibraryMatrix.operations;
 using System.Data;
 
@@ -21,12 +23,13 @@ namespace WinFormsApp1
         private IControlManager<IControl> controlManager;
         private Dictionary<Control, Point> controlInitialPositionsMatrix1;
         private Dictionary<Control, Point> controlInitialPositionsMatrix2;
+        private readonly ILabelService labelService;
         public FormForArithmetic()
         {
             InitializeComponent();
             IControlManagerFactory<IControl> factory = new WinFormControlManagerFactory<IControl>();
             controlManager = factory.CreateControlManager(this);
-
+            labelService = new WinFormsLabelService();
             controlInitialPositionsMatrix1 = new Dictionary<Control, Point>
             {
                 { buttonMatrixPow, buttonMatrixPow.Location },
@@ -52,6 +55,8 @@ namespace WinFormsApp1
                 { buttonCosSecondMatrix, buttonCosSecondMatrix.Location },
                 { buttonTangSecondMatrix, buttonTangSecondMatrix.Location }
             };
+
+            MessageBoxHelper.ShowMessage = message => MessageBox.Show(message);
         }
         private void FormForArithmetic_Load(object sender, EventArgs e)
         {
@@ -149,8 +154,6 @@ namespace WinFormsApp1
             }
         }
 
-
-
         private void DisplayResultMatrix(IMatrix resultMatrix)
         {
             double[,] resultMatrixArray = resultMatrix.MatrixArray;
@@ -160,8 +163,15 @@ namespace WinFormsApp1
                 controlManager.ClearControls(resultTextBoxMatrix.DataInputs.Cast<IControl>());
             }
 
-            var lastButton = buttonTangMatrix.Location.Y > buttonTangSecondMatrix.Location.Y ? buttonTangMatrix : buttonTangSecondMatrix;
-            resultTextBoxMatrix = CreateAndDisplayMatrix(resultMatrix.Rows, resultMatrix.Columns, lastButton.Location.X, lastButton.Location.Y + lastButton.Height + 70, false);
+            labelService.ClearResultLabels(this);
+            int labelX = 400;
+            int labelY = this.ClientSize.Height - 200;
+            labelService.AddResultLabel(this, "Result Matrix", labelX, labelY);
+
+            int matrixX = 400;
+            int matrixY = labelY + 30;
+
+            resultTextBoxMatrix = CreateAndDisplayMatrix(resultMatrix.Rows, resultMatrix.Columns, matrixX, matrixY, false);
 
             MatrixProcessor.SetMatrixValues(resultTextBoxMatrix, resultMatrixArray);
 
@@ -305,9 +315,7 @@ namespace WinFormsApp1
                     DisplayResultMatrix(resultMatrix);
             }
             else
-            {
-                MessageBox.Show("Не правильно введені дані, перевірте та повторіть спробу ще раз!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+                MessageBoxHelper.Show("The data entered is incorrect, please check and try again!");
         }
 
         private void ExecuteSingleMatrixOperation(TextBoxMatrix numbers, Func<IMatrix, IMatrix> operation)
@@ -344,7 +352,7 @@ namespace WinFormsApp1
             if (!string.IsNullOrEmpty(parameterTextBox.Text) && double.TryParse(parameterTextBox.Text, out double parameter))
                 return parameter;
 
-            MessageBox.Show("Введіть значення для параметра", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBoxHelper.Show("Enter a value for the parameter");
             return -1;
         }
         private void ResetButtonPositions(bool isFirstMatrix)
@@ -355,6 +363,11 @@ namespace WinFormsApp1
             {
                 entry.Key.Location = entry.Value;
             }
+        }
+
+        private void labelMatrixA_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

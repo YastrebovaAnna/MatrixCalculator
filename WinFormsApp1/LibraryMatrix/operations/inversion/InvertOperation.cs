@@ -1,12 +1,9 @@
 ﻿using LibraryMatrix.core;
 using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
 using LibraryMatrix.operations.determinant;
 using LibraryMatrix.operations.unary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LibraryMatrix.validators;
 
 namespace LibraryMatrix.operations.inversion
 {
@@ -14,17 +11,18 @@ namespace LibraryMatrix.operations.inversion
     {
         private readonly SubMatrixCreator _subMatrixCreator;
         private readonly CalculateDeterminantRecursive _calculateDeterminantRecursive;
+        private readonly IUnaryMatrixSizeValidator _sizeValidator;
 
         public InvertOperation()
         {
             _subMatrixCreator = new SubMatrixCreator();
             _calculateDeterminantRecursive = new CalculateDeterminantRecursive();
+            _sizeValidator = new SquareMatrixValidator();
         }
 
         public IMatrix Execute(IMatrix matrix)
         {
-            if (matrix.Rows != matrix.Columns)
-                throw new InvalidOperationException("Matrix must be square.");
+            _sizeValidator.Validate(matrix);
 
             int size = matrix.Rows;
             double[,] invertedMatrixArray = new double[size, size];
@@ -32,7 +30,7 @@ namespace LibraryMatrix.operations.inversion
 
             if (determinant == 0)
             {
-                throw new InvalidOperationException("Matrix determinant is zero, cannot invert.");
+                MessageBoxHelper.Show($"Matrix determinant is zero, cannot invert.");
                 return null;
             }
 

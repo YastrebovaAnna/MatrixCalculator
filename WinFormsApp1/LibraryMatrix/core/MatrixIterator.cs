@@ -26,7 +26,7 @@ namespace LibraryMatrix.core
         {
             if (_matrix.Rows != otherMatrix.Rows || _matrix.Columns != otherMatrix.Columns)
             {
-                throw new InvalidOperationException("Matrices must have the same dimensions for iteration.");
+                return;
             }
 
             for (int i = 0; i < _matrix.Rows; i++)

@@ -1,13 +1,21 @@
 ﻿using LibraryMatrix.interfaces;
+using LibraryMatrix.interfaces.validation;
+using LibraryMatrix.validators;
 
 namespace LibraryMatrix.operations.determinant
 {
     public class CalculateDeterminantTriangleMethod : IMatrixOperation<double>
     {
+        private readonly IUnaryMatrixSizeValidator _sizeValidator;
+
+        public CalculateDeterminantTriangleMethod()
+        {
+            _sizeValidator = new SquareMatrixValidator();
+        }
+
         public double Execute(IMatrix matrix)
         {
-            if (matrix.Rows != matrix.Columns)
-                throw new InvalidOperationException("Matrix must be square.");
+            _sizeValidator.Validate(matrix);
 
             double[,] tempMatrix = (double[,])matrix.MatrixArray.Clone();
             int n = matrix.Rows;
