@@ -31,10 +31,9 @@ namespace CalcMatrix
         }
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
-            int rows = (int)numericUpDownRowsMatrix.Value;
-            int cols = (int)numericUpDownColMatrix.Value;
-            numbers1 = CreateAndDisplayMatrix(rows, cols, 80, 270);
+            CreateAndDisplayMatrix((int)numericUpDownRowsMatrix.Value, (int)numericUpDownColMatrix.Value, FormConstantsDigital.TextBoxMatrixX, FormConstantsDigital.TextBoxMatrixYForTransposing);
         }
+
         private TextBoxMatrix CreateAndDisplayMatrix(int rows, int cols, int startX, int startY)
         {
             IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
@@ -93,7 +92,7 @@ namespace CalcMatrix
         {
             double determinant;
             determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-            labelService.AddResultLabel(this, "Determinant: " + determinant.ToString(), 100, 500);
+             labelService.AddResultLabel(this, $"{FormConstantsString.DeterminantLabelPrefix}{determinant}", FormConstantsDigital.ErrorLabelX, FormConstantsDigital.ErrorLabelY);
 
             matrixs = MatrixFacade.Invert(matrix);
         }
@@ -123,15 +122,10 @@ namespace CalcMatrix
                 controlManager.ClearControls(resultTextBoxMatrix.DataInputs.Cast<IControl>());
             }
 
-            int labelX = 750;
-            int labelY = 480;
             labelService.ClearResultLabels(this);
-            labelService.AddResultLabel(this, "Result", labelX, labelY);
+            labelService.AddResultLabel(this, FormConstantsString.ResultLabelText, FormConstantsDigital.MatrixX, FormConstantsDigital.MatrixY);
 
-            int matrixX = 750;
-            int matrixY = labelY + 30;
-
-            resultTextBoxMatrix = CreateAndDisplayMatrix(resultRows, resultCols, matrixX, matrixY);
+            resultTextBoxMatrix = CreateAndDisplayMatrix(resultRows, resultCols, FormConstantsDigital.MatrixX, FormConstantsDigital.MatrixY + FormConstantsDigital.MatrixLabelYOffset);
             MatrixProcessor.SetMatrixValues(resultTextBoxMatrix, resultMatrixArray);
 
             foreach (TextBox textBox in resultTextBoxMatrix.DataInputs.Cast<WinFormTextBox>().Select(wft => wft.GetTextBox()))

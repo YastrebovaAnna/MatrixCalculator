@@ -27,13 +27,14 @@ namespace CalcMatrix
 
         private void buttonDisplayTextBox_Click(object sender, EventArgs e)
         {
+            CreateAndDisplayTextBoxMatrix((int)numericUpDownRowsMatrix.Value, (int)numericUpDownColMatrix.Value);
+        }
+        private void CreateAndDisplayTextBoxMatrix(int rows, int cols)
+        {
             try
             {
-                int rows = (int)numericUpDownRowsMatrix.Value;
-                int cols = (int)numericUpDownColMatrix.Value;
-
                 IDataInputFactory dataInputFactory = new WinFormDataInputFactory();
-                textBoxMatrix = new TextBoxMatrix(rows, cols, 80, 250, dataInputFactory);
+                textBoxMatrix = new TextBoxMatrix(rows, cols, FormConstantsDigital.TextBoxMatrixX, FormConstantsDigital.TextBoxMatrixY, dataInputFactory);
 
                 foreach (var dataInput in textBoxMatrix.DataInputs)
                 {
@@ -42,7 +43,7 @@ namespace CalcMatrix
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error when creating the matrix: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format(FormConstantsString.MatrixCreationErrorMessage, ex.Message), FormConstantsString.ErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void buttonDetermSol_Click(object sender, EventArgs e)
@@ -50,51 +51,60 @@ namespace CalcMatrix
             double[,] matrixValues = MatrixProcessor.GetMatrixValues(textBoxMatrix);
             if (matrixValues == null)
             {
-                MessageBox.Show("The data entered is incorrect, please check and try again!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(FormConstantsString.IncorrectDataMessage, FormConstantsString.ErrorMessageTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            int rows = textBoxMatrix.Rows;
-            int cols = textBoxMatrix.Columns;
-            IMatrix matrix = new Matrix(rows, cols, matrixValues);
+            IMatrix matrix = new Matrix(textBoxMatrix.Rows, textBoxMatrix.Columns, matrixValues);
             labelService.ClearResultLabels(this);
-
-            double determinant = 0.0;
+            CalculateAndDisplayResults(matrix);
+        }
+        private void CalculateAndDisplayResults(IMatrix matrix)
+        {
             if (checkBoxDeterm.Checked)
             {
-                bool isSmallMatrix = (rows == 1 && cols == 1) || (rows == 2 && cols == 2);
-                bool isThreeByThreeMatrix = rows == 3 && cols == 3;
+                double determinant = CalculateDeterminant(matrix);
+                labelService.AddResultLabel(this, $"{FormConstantsString.DeterminantLabelPrefix}{determinant}", FormConstantsDigital.ResultLabelX, FormConstantsDigital.ResultLabelY);
+            }
 
-                if (isSmallMatrix || isThreeByThreeMatrix)
+            CalculateAndDisplayMetrics(matrix);
+        }
+
+        private double CalculateDeterminant(IMatrix matrix)
+        {
+            if (IsSmallOrThreeByThreeMatrix(matrix))
+            {
+                if (matrix.Rows == 3)
                 {
-                    if (isThreeByThreeMatrix)
+                    if (radioButtonTriangle.Checked)
                     {
-                        if (radioButtonTriangle.Checked)
-                        {
-                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
-                        }
-                        else if (radioButtonSar.Checked)
-                        {
-                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
-                        }
-                        else if (radioButtonRoz.Checked)
-                        {
-                            determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
-                        }
+                        return MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
                     }
-                    else
+                    else if (radioButtonSar.Checked)
                     {
-                        determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
+                        return MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantSarrus());
+                    }
+                    else if (radioButtonRoz.Checked)
+                    {
+                        return MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
                     }
                 }
                 else
                 {
-                    determinant = MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+                    return MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantTriangleMethod());
                 }
-
-                labelService.AddResultLabel(this, "Determinant: " + determinant.ToString(), 800, 300);
             }
-            CalculateAndDisplayMetrics(matrix);
+            else
+            {
+                return MatrixFacade.CalculateDeterminant(matrix, new CalculateDeterminantGauss());
+            }
+
+            return 0.0;
+        }
+
+        private bool IsSmallOrThreeByThreeMatrix(IMatrix matrix)
+        {
+            return (matrix.Rows == 1 && matrix.Columns == 1) || (matrix.Rows == 2 && matrix.Columns == 2) || (matrix.Rows == 3 && matrix.Columns == 3);
         }
         private void CalculateAndDisplayMetrics(IMatrix matrix)
         {
@@ -114,18 +124,23 @@ namespace CalcMatrix
             {
                 if (checkBox.Checked)
                 {
-                    var result = calculation(matrix);
-                    labelService.AddResultLabel(this, $"{label} {result}", 800, 300);
+                    Double result = calculation(matrix);
+                    labelService.AddResultLabel(this, $"{label} {result}", FormConstantsDigital.ResultLabelX, FormConstantsDigital.ResultLabelY);
                 }
             }
         }
         private void buttonClear1_Click(object sender, EventArgs e)
+        {
+            ClearMatrixControls();
+        }
+
+        private void ClearMatrixControls()
         {
             if (textBoxMatrix != null)
             {
                 controlManager.ClearControls(textBoxMatrix.DataInputs.Cast<IControl>());
                 textBoxMatrix = null;
             }
-        }                                               
+        }
     }
 }
