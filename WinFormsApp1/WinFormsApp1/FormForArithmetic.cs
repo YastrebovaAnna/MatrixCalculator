@@ -1,4 +1,5 @@
-﻿using LibraryMatrix;
+﻿using CalcMatrix;
+using LibraryMatrix;
 using LibraryMatrix.calculator;
 using LibraryMatrix.core;
 using LibraryMatrix.facade;
@@ -127,30 +128,60 @@ namespace WinFormsApp1
                 var control = entry.Key;
                 var initialLocation = entry.Value;
 
-                if (control == textBoxForExponent || control == textBoxForSecondExponent ||
-                    control == textBoxForSkalyar || control == textBoxForSecondSkalyar)
-                {
-                    continue;
-                }
+                if (IsSpecialControl(control)) continue;
 
                 control.Location = new Point(initialLocation.X, newY);
 
-                if (control == buttonMatrixPow || control == buttonSecondMatrixPow)
+                if (IsExponentControl(control))
                 {
-                    if (control == buttonMatrixPow)
-                        textBoxForExponent.Location = new Point(textBoxForExponent.Location.X, control.Location.Y);
-                    else if (control == buttonSecondMatrixPow)
-                        textBoxForSecondExponent.Location = new Point(textBoxForSecondExponent.Location.X, control.Location.Y);
+                    AdjustExponentControl(control);
                 }
-                else if (control == buttonMultSklyar || control == buttonSecondMultSklyar)
+                else if (IsScalarControl(control))
                 {
-                    if (control == buttonMultSklyar)
-                        textBoxForSkalyar.Location = new Point(textBoxForSkalyar.Location.X, control.Location.Y);
-                    else if (control == buttonSecondMultSklyar)
-                        textBoxForSecondSkalyar.Location = new Point(textBoxForSecondSkalyar.Location.X, control.Location.Y);
+                    AdjustScalarControl(control);
                 }
 
                 newY += control.Height + 10;
+            }
+        }
+
+        private bool IsSpecialControl(Control control)
+        {
+            return control == textBoxForExponent || control == textBoxForSecondExponent ||
+                   control == textBoxForSkalyar || control == textBoxForSecondSkalyar;
+        }
+
+        private bool IsExponentControl(Control control)
+        {
+            return control == buttonMatrixPow || control == buttonSecondMatrixPow;
+        }
+
+        private bool IsScalarControl(Control control)
+        {
+            return control == buttonMultSklyar || control == buttonSecondMultSklyar;
+        }
+
+        private void AdjustExponentControl(Control control)
+        {
+            if (control == buttonMatrixPow)
+            {
+                textBoxForExponent.Location = new Point(textBoxForExponent.Location.X, control.Location.Y);
+            }
+            else if (control == buttonSecondMatrixPow)
+            {
+                textBoxForSecondExponent.Location = new Point(textBoxForSecondExponent.Location.X, control.Location.Y);
+            }
+        }
+
+        private void AdjustScalarControl(Control control)
+        {
+            if (control == buttonMultSklyar)
+            {
+                textBoxForSkalyar.Location = new Point(textBoxForSkalyar.Location.X, control.Location.Y);
+            }
+            else if (control == buttonSecondMultSklyar)
+            {
+                textBoxForSecondSkalyar.Location = new Point(textBoxForSecondSkalyar.Location.X, control.Location.Y);
             }
         }
 
@@ -164,12 +195,12 @@ namespace WinFormsApp1
             }
 
             labelService.ClearResultLabels(this);
-            int labelX = 400;
-            int labelY = this.ClientSize.Height - 200;
-            labelService.AddResultLabel(this, "Result Matrix", labelX, labelY);
+            int labelX = FormConstantsDigital.ButtonLabelX;
+            int labelY = this.ClientSize.Height - FormConstantsDigital.ButtonLabelY;
+            labelService.AddResultLabel(this, FormConstantsString.ResultLabelText, labelX, labelY);
 
-            int matrixX = 400;
-            int matrixY = labelY + 30;
+            int matrixX = FormConstantsDigital.ButtonLabelX;
+            int matrixY = labelY + FormConstantsDigital.MatrixXMargin;
 
             resultTextBoxMatrix = CreateAndDisplayMatrix(resultMatrix.Rows, resultMatrix.Columns, matrixX, matrixY, false);
 
@@ -205,7 +236,7 @@ namespace WinFormsApp1
 
         private void ShowComparisonResult(IMatrix result)
         {
-            MessageBox.Show(result.MatrixArray[0, 0] == 1.0 ? "Matrices are equal" : "Matrices are not equal", "Comparison Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(result.MatrixArray[0, 0] == 1.0 ? FormConstantsString.ComparisonResultEqual : FormConstantsString.ComparisonResultNotEqual, FormConstantsString.ComparisonResultTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void buttonMatrixPow_Click(object sender, EventArgs e)
@@ -315,7 +346,7 @@ namespace WinFormsApp1
                     DisplayResultMatrix(resultMatrix);
             }
             else
-                MessageBoxHelper.Show("The data entered is incorrect, please check and try again!");
+                MessageBoxHelper.Show(FormConstantsString.DataError);
         }
 
         private void ExecuteSingleMatrixOperation(TextBoxMatrix numbers, Func<IMatrix, IMatrix> operation)
@@ -352,7 +383,7 @@ namespace WinFormsApp1
             if (!string.IsNullOrEmpty(parameterTextBox.Text) && double.TryParse(parameterTextBox.Text, out double parameter))
                 return parameter;
 
-            MessageBoxHelper.Show("Enter a value for the parameter");
+            MessageBoxHelper.Show(FormConstantsString.EnterValue);
             return -1;
         }
         private void ResetButtonPositions(bool isFirstMatrix)
@@ -363,11 +394,6 @@ namespace WinFormsApp1
             {
                 entry.Key.Location = entry.Value;
             }
-        }
-
-        private void labelMatrixA_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
